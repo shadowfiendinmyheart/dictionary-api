@@ -32,6 +32,13 @@ export class UserController {
     return this.userService.getAllUsers();
   }
 
+  @ApiOperation({ summary: 'Получить пользователя' })
+  @ApiResponse({ status: 200, type: User })
+  @Get(':id')
+  get(@Param('id') id: number) {
+    return this.userService.getUser(id);
+  }
+
   @ApiOperation({ summary: 'Поменять данные пользователя' })
   @ApiResponse({ status: 204, type: null })
   @HttpCode(204)

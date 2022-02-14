@@ -18,6 +18,11 @@ export class UserService {
     return users;
   }
 
+  async getUser(id: number) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    return user;
+  }
+
   async changeUserPassword(id: number, dto: UpdateUserDto) {
     const updatedUser = await this.userRepository.update(dto, {
       where: { id },
