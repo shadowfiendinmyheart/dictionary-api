@@ -5,6 +5,7 @@ import { User } from './user/user.model';
 import { UserModule } from './user/user.module';
 import { DictionaryModule } from './dictionary/dictionary.module';
 import { Dictionary } from './dictionary/dictionary.model';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   controllers: [],
@@ -32,6 +33,7 @@ import { Dictionary } from './dictionary/dictionary.model';
     }),
     UserModule,
     DictionaryModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
