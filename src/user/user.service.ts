@@ -1,12 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
+import * as bcrypt from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.model';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User) private userRepository: typeof User) {}
+  constructor(
+    @InjectModel(User) private userRepository: typeof User,
+    @Inject(REQUEST) private request: Request,
+  ) {}
 
   async createUser(dto: CreateUserDto) {
     const user = await this.userRepository.create(dto);
@@ -28,10 +34,17 @@ export class UserService {
     return user;
   }
 
-  async changeUserPassword(id: number, dto: UpdateUserDto) {
-    const updatedUser = await this.userRepository.update(dto, {
-      where: { id },
-    });
+  async changeUserPassword(password: string) {
+    const user = this.request.user;
+    const salt = await bcrypt.genSaltSync(10);
+    const hashPassword = await bcrypt.hash(password, salt);
+    const updatedUser = await this.userRepository.update(
+      { password: hashPassword },
+      {
+        where: { id: user.id },
+      },
+    );
     return updatedUser;
   }
+
 }

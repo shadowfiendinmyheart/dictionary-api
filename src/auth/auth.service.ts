@@ -5,9 +5,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcryptjs';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from 'src/user/user.service';
-import * as bycrypt from 'bcryptjs';
 import { User } from 'src/user/user.model';
 
 @Injectable()
@@ -30,7 +30,8 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const hashPassword = await bycrypt.hash(userDto.password, 5);
+    const salt = await bcrypt.genSaltSync(10);
+    const hashPassword = await bcrypt.hash(userDto.password, salt);
     const user = await this.userService.createUser({
       ...userDto,
       password: hashPassword,
@@ -47,7 +48,7 @@ export class AuthService {
 
   private async validateUser(userDto: CreateUserDto) {
     const user = await this.userService.getUserByEmail(userDto.email);
-    const passwordEquals = await bycrypt.compare(
+    const passwordEquals = await bcrypt.compare(
       userDto.password,
       user.password,
     );

@@ -6,12 +6,15 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.model';
 import { UserService } from './user.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 
 @ApiTags('Пользователь')
 @Controller('user')
@@ -39,14 +42,12 @@ export class UserController {
     return this.userService.getUser(id);
   }
 
-  @ApiOperation({ summary: 'Поменять данные пользователя' })
+  @ApiOperation({ summary: 'Поменять пароль пользователя' })
   @ApiResponse({ status: 204, type: null })
+  @UseGuards(JwtAuthGuard)
   @HttpCode(204)
-  @Patch(':id')
-  changePassword(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    return this.userService.changeUserPassword(Number(id), updateUserDto);
+  @Patch('/changePassword')
+  changePassword(@Body() userDto: UpdateUserPasswordDto) {
+    return this.userService.changeUserPassword(userDto.password);
   }
 }
