@@ -35,6 +35,13 @@ export class Dictionary extends Model<Dictionary, DictionaryCreationAttrs> {
   language: string;
 
   @ApiProperty({
+    example: 'true',
+    description: 'Виден ли словарь другим пользователям',
+  })
+  @Column({ type: DataType.BOOLEAN, allowNull: false })
+  private: boolean;
+
+  @ApiProperty({
     example: '1',
     description:
       'Уникальный идентификатор пользователя, которому принадлежит словарь',

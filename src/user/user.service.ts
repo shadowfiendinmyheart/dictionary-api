@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/sequelize';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import * as bcrypt from 'bcryptjs';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.model';
 
@@ -46,5 +45,4 @@ export class UserService {
     );
     return updatedUser;
   }
-
 }

@@ -8,9 +8,8 @@ export class CreateDictionaryDto {
   readonly language: string;
 
   @ApiProperty({
-    example: '1',
-    description:
-      'Уникальный идентификатор пользователя, которому принадлежит словарь',
+    example: 'true',
+    description: 'Доступен ли словарь другим пользователям',
   })
-  readonly user_id: number;
+  readonly private: boolean;
 }
