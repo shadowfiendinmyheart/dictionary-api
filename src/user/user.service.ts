@@ -4,7 +4,7 @@ import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import * as bcrypt from 'bcryptjs';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './user.model';
+import { User } from './models/user.model';
 
 @Injectable()
 export class UserService {

@@ -1,9 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { PickType } from '@nestjs/swagger';
+import { CreateUserDto } from './create-user.dto';
 
-export class UpdateUserPasswordDto {
-  @ApiProperty({
-    example: 'qwerty12345',
-    description: 'Новый пароль пользователя',
-  })
-  readonly password: string;
-}
+export class UpdateUserPasswordDto extends PickType(CreateUserDto, [
+  'password',
+] as const) {}

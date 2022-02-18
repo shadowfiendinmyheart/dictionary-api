@@ -1,9 +1,9 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AuthModule } from 'src/auth/auth.module';
-import { Dictionary } from 'src/dictionary/dictionary.model';
+import { Dictionary } from 'src/dictionary/models/dictionary.model';
 import { UserController } from './user.controller';
-import { User } from './user.model';
+import { User } from './models/user.model';
 import { UserService } from './user.service';
 
 @Module({

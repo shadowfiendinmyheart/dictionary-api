@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { Dictionary } from './dictionary.model';
+import { Dictionary } from './models/dictionary.model';
 import { DictionaryService } from './dictionary.service';
 import { CreateDictionaryDto } from './dto/create-dictionary.dto';
 
@@ -20,8 +20,15 @@ export class DictionaryController {
 
   @ApiOperation({ summary: 'Получить все словари пользователя' })
   @ApiResponse({ status: 200, type: Dictionary })
-  @Get()
+  @Get('/all')
   getAll() {
     return this.dictionaryService.getAllDictionary();
+  }
+
+  @ApiOperation({ summary: 'Получить словарь пользователя' })
+  @ApiResponse({ status: 200, type: Dictionary })
+  @Get(':id')
+  get(@Param('id') id: number) {
+    return this.dictionaryService.getDictionaryById(id);
   }
 }

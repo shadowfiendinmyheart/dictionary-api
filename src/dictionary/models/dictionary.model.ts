@@ -4,10 +4,12 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
-import { User } from 'src/user/user.model';
+import { Card } from 'src/card/models/card.model';
+import { User } from 'src/user/models/user.model';
 
 interface DictionaryCreationAttrs {
   name: string;
@@ -52,4 +54,7 @@ export class Dictionary extends Model<Dictionary, DictionaryCreationAttrs> {
 
   @BelongsTo(() => User)
   user: User;
+
+  @HasMany(() => Card)
+  cards: Card[];
 }

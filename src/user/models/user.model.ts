@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
-import { Dictionary } from 'src/dictionary/dictionary.model';
+import { Dictionary } from 'src/dictionary/models/dictionary.model';
 
 interface UserCreationAttrs {
   username: string;
