@@ -8,6 +8,7 @@ import { Association } from '../association/entities/association.model';
 import { PhraseModule } from 'src/phrase/phrase.module';
 import { TranslateModule } from 'src/translate/translate.module';
 import { ImageModule } from 'src/image/image.module';
+import { AssociationModule } from 'src/association/association.module';
 
 @Module({
   controllers: [CardController],
@@ -17,6 +18,7 @@ import { ImageModule } from 'src/image/image.module';
     PhraseModule,
     TranslateModule,
     ImageModule,
+    AssociationModule,
   ],
   exports: [CardService],
 })
