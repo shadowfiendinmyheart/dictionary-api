@@ -1,11 +1,25 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
 import { CreateTranslateDto } from './dto/create-translate.dto';
 import { UpdateTranslateDto } from './dto/update-translate.dto';
+import { Translate } from './models/translate.model';
 
 @Injectable()
 export class TranslateService {
-  create(createTranslateDto: CreateTranslateDto) {
-    return 'This action adds a new translate';
+  constructor(
+    @InjectModel(Translate) private readonly translateRepository: typeof Translate
+  ) { }
+
+  async create(dto: CreateTranslateDto) {
+    const translate = await this.translateRepository.create(dto);
+    return translate;
+  }
+
+  async getPhraseByName(name: string) {
+    const translate = await this.translateRepository.findOne({
+      where: { name }
+    });
+    return translate ? translate : false;
   }
 
   findAll() {

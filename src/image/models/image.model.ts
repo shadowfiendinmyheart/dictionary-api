@@ -3,7 +3,7 @@ import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
 import { Association } from 'src/card/models/association.model';
 
 @Table({ tableName: 'image' })
-export class AssociationImage extends Model<AssociationImage> {
+export class Image extends Model<Image> {
   @ApiProperty({ example: '1', description: 'Уникальный идентификатор' })
   @Column({
     type: DataType.INTEGER,

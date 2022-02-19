@@ -13,7 +13,7 @@ import { ImageModule } from './image/image.module';
 import { Card } from './card/models/card.model';
 import { Phrase } from './phrase/models/phrase.model';
 import { Translate } from './translate/models/translate.model';
-import { AssociationImage } from './image/models/image.model';
+import { Image } from './image/models/image.model';
 import { CardAssociation } from './card/models/cardAssociation.model';
 import { Association } from './card/models/association.model';
 
@@ -35,7 +35,7 @@ import { Association } from './card/models/association.model';
         User,
         Dictionary,
         Phrase,
-        AssociationImage,
+        Image,
         Translate,
         Card,
         Association,

@@ -1,11 +1,25 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
+import { Image } from './models/image.model';
 
 @Injectable()
 export class ImageService {
-  create(createImageDto: CreateImageDto) {
-    return 'This action adds a new image';
+  constructor(
+    @InjectModel(Image) private readonly imageRepository: typeof Image
+  ) { }
+  
+  async create(dto: CreateImageDto) {
+    const image = await this.imageRepository.create(dto);
+    return image;
+  }
+
+  async getImageByData(data: string) {
+    const image = await this.imageRepository.findOne({
+      where: { data }
+    });
+    return image ? image : false;
   }
 
   findAll() {

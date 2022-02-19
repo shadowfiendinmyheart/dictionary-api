@@ -8,7 +8,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { AssociationImage } from 'src/image/models/image.model';
+import { Image } from 'src/image/models/image.model';
 import { Translate } from 'src/translate/models/translate.model';
 import { Card } from './card.model';
 import { CardAssociation } from './cardAssociation.model';
@@ -34,10 +34,10 @@ export class Association extends Model<Association> {
   @BelongsTo(() => Translate)
   translate: Translate;
 
-  @ForeignKey(() => AssociationImage)
+  @ForeignKey(() => Image)
   @Column
   image_id: number;
 
-  @BelongsTo(() => AssociationImage)
-  image: AssociationImage;
+  @BelongsTo(() => Image)
+  image: Image;
 }
