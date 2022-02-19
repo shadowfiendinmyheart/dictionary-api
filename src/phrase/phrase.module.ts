@@ -7,9 +7,7 @@ import { PhraseService } from './phrase.service';
 @Module({
   controllers: [PhraseController],
   providers: [PhraseService],
-  imports: [
-    SequelizeModule.forFeature([Phrase]),
-  ],
-  exports: [PhraseService]
+  imports: [SequelizeModule.forFeature([Phrase])],
+  exports: [PhraseService],
 })
 export class PhraseModule {}

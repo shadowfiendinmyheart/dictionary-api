@@ -7,9 +7,9 @@ import { Image } from './models/image.model';
 @Injectable()
 export class ImageService {
   constructor(
-    @InjectModel(Image) private readonly imageRepository: typeof Image
-  ) { }
-  
+    @InjectModel(Image) private readonly imageRepository: typeof Image,
+  ) {}
+
   async create(dto: CreateImageDto) {
     const image = await this.imageRepository.create(dto);
     return image;
@@ -17,9 +17,9 @@ export class ImageService {
 
   async getImageByData(data: string) {
     const image = await this.imageRepository.findOne({
-      where: { data }
+      where: { data },
     });
-    return image ? image : false;
+    return image;
   }
 
   findAll() {

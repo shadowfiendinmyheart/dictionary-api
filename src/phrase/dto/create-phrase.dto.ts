@@ -1,6 +1,6 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreatePhraseDto {
-    @ApiProperty({ example: 'Cat', description: 'Иностранная фраза' })
-    readonly name: string;
+  @ApiProperty({ example: 'Cat', description: 'Иностранная фраза' })
+  readonly name: string;
 }

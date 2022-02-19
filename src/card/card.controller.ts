@@ -13,7 +13,7 @@ import { UpdateCardDto } from './dto/update-card.dto';
 
 @Controller('card')
 export class CardController {
-  constructor(private readonly cardService: CardService) {}
+  constructor(private cardService: CardService) {}
 
   @Post()
   create(@Body() createCardDto: CreateCardDto) {

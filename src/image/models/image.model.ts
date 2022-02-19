@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
-import { Association } from 'src/card/models/association.model';
+import { Association } from 'src/association/entities/association.model';
 
 @Table({ tableName: 'image' })
 export class Image extends Model<Image> {

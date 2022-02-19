@@ -7,19 +7,20 @@ import { Translate } from './models/translate.model';
 @Injectable()
 export class TranslateService {
   constructor(
-    @InjectModel(Translate) private readonly translateRepository: typeof Translate
-  ) { }
+    @InjectModel(Translate)
+    private readonly translateRepository: typeof Translate,
+  ) {}
 
   async create(dto: CreateTranslateDto) {
     const translate = await this.translateRepository.create(dto);
     return translate;
   }
 
-  async getPhraseByName(name: string) {
+  async getTranslateByName(name: string) {
     const translate = await this.translateRepository.findOne({
-      where: { name }
+      where: { name },
     });
-    return translate ? translate : false;
+    return translate;
   }
 
   findAll() {

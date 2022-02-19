@@ -10,8 +10,8 @@ import {
 } from 'sequelize-typescript';
 import { Image } from 'src/image/models/image.model';
 import { Translate } from 'src/translate/models/translate.model';
-import { Card } from './card.model';
-import { CardAssociation } from './cardAssociation.model';
+import { Card } from '../../card/models/card.model';
+import { CardAssociation } from '../../card/models/cardAssociation.model';
 
 @Table({ tableName: 'association' })
 export class Association extends Model<Association> {

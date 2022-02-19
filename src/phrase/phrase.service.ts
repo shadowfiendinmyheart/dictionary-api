@@ -5,9 +5,7 @@ import { Phrase } from './models/phrase.model';
 
 @Injectable()
 export class PhraseService {
-  constructor(
-    @InjectModel(Phrase) private readonly phraseRepository: typeof Phrase
-  ) { }
+  constructor(@InjectModel(Phrase) private phraseRepository: typeof Phrase) {}
 
   async create(dto: CreatePhraseDto) {
     const phrase = await this.phraseRepository.create(dto);
@@ -16,8 +14,8 @@ export class PhraseService {
 
   async getPhraseByName(name: string) {
     const phrase = await this.phraseRepository.findOne({
-      where: { name }
+      where: { name },
     });
-    return phrase ? phrase : false;
+    return phrase;
   }
 }

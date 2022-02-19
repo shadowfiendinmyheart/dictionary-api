@@ -10,7 +10,7 @@ import {
 } from 'sequelize-typescript';
 import { Dictionary } from 'src/dictionary/models/dictionary.model';
 import { Phrase } from 'src/phrase/models/phrase.model';
-import { Association } from './association.model';
+import { Association } from '../../association/entities/association.model';
 import { CardAssociation } from './cardAssociation.model';
 
 @Table({ tableName: 'card' })

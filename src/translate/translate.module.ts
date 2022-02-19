@@ -7,9 +7,7 @@ import { Translate } from './models/translate.model';
 @Module({
   controllers: [TranslateController],
   providers: [TranslateService],
-  imports: [
-    SequelizeModule.forFeature([Translate]),
-  ],
-  exports: [TranslateService]
+  imports: [SequelizeModule.forFeature([Translate])],
+  exports: [TranslateService],
 })
 export class TranslateModule {}

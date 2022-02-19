@@ -15,7 +15,8 @@ import { Phrase } from './phrase/models/phrase.model';
 import { Translate } from './translate/models/translate.model';
 import { Image } from './image/models/image.model';
 import { CardAssociation } from './card/models/cardAssociation.model';
-import { Association } from './card/models/association.model';
+import { Association } from './association/entities/association.model';
+import { AssociationModule } from './association/association.module';
 
 @Module({
   controllers: [],
@@ -57,6 +58,7 @@ import { Association } from './card/models/association.model';
     TranslateModule,
     CardModule,
     ImageModule,
+    AssociationModule,
   ],
 })
 export class AppModule {}

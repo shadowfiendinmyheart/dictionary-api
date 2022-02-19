@@ -7,7 +7,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { Card } from './card.model';
-import { Association } from './association.model';
+import { Association } from '../../association/entities/association.model';
 
 @Table({ tableName: 'card_association', timestamps: false })
 export class CardAssociation extends Model<CardAssociation> {
