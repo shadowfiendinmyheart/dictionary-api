@@ -23,6 +23,18 @@ export class TranslateService {
     return translate;
   }
 
+  async findOrCreate(name: string) {
+    const [translate, translateCreated] =
+      await this.translateRepository.findOrCreate({
+        where: { name },
+        defaults: {
+          name,
+        },
+      });
+
+    return translate;
+  }
+
   findAll() {
     return `This action returns all translate`;
   }

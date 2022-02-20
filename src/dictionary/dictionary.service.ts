@@ -34,8 +34,7 @@ export class DictionaryService {
     return dictionary;
   }
 
-  async getAllDictionary() {
-    const userId = this.request.user.id;
+  async getDictionariesByUserId(userId: number = this.request.user.id) {
     const dictionary = await this.dictionaryRepository.findAll({
       where: { user_id: userId },
     });
@@ -47,15 +46,18 @@ export class DictionaryService {
     const dictionary = await this.dictionaryRepository.findOne({
       where: { id: dictionaryId },
     });
+    this.checkPrivate(dictionary, userId);
 
+    return dictionary;
+  }
+
+  async checkPrivate(dictionary: Dictionary, userId: number) {
     if (dictionary.private && userId !== dictionary.user_id) {
       throw new HttpException(
         'У вас нет доступа к данному словарю',
         HttpStatus.FORBIDDEN,
       );
     }
-
-    return dictionary;
   }
 
   private async checkDictionary(

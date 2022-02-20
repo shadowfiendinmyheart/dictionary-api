@@ -13,5 +13,6 @@ import { AuthModule } from 'src/auth/auth.module';
     SequelizeModule.forFeature([Dictionary, User]),
     forwardRef(() => AuthModule),
   ],
+  exports: [DictionaryService],
 })
 export class DictionaryModule {}

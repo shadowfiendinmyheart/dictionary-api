@@ -22,7 +22,7 @@ export class DictionaryController {
   @ApiResponse({ status: 200, type: Dictionary })
   @Get('/all')
   getAll() {
-    return this.dictionaryService.getAllDictionary();
+    return this.dictionaryService.getDictionariesByUserId();
   }
 
   @ApiOperation({ summary: 'Получить словарь пользователя' })

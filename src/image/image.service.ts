@@ -22,6 +22,17 @@ export class ImageService {
     return image;
   }
 
+  async findOrCreate(data: string) {
+    const [image, imageCreated] = await this.imageRepository.findOrCreate({
+      where: { data },
+      defaults: {
+        data,
+      },
+    });
+
+    return image;
+  }
+
   findAll() {
     return `This action returns all image`;
   }

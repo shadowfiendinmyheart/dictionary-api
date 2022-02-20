@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  BelongsTo,
   Column,
   DataType,
   ForeignKey,
@@ -20,9 +21,15 @@ export class CardAssociation extends Model<CardAssociation> {
   })
   id: number;
 
+  @BelongsTo(() => Card)
+  card: Card;
+
   @ForeignKey(() => Card)
   @Column
   card_id: number;
+
+  @BelongsTo(() => Association)
+  association: Association;
 
   @ForeignKey(() => Association)
   @Column

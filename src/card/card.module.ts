@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { CardService } from './card.service';
 import { CardController } from './card.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
@@ -9,16 +9,20 @@ import { PhraseModule } from 'src/phrase/phrase.module';
 import { TranslateModule } from 'src/translate/translate.module';
 import { ImageModule } from 'src/image/image.module';
 import { AssociationModule } from 'src/association/association.module';
+import { DictionaryModule } from 'src/dictionary/dictionary.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   controllers: [CardController],
   providers: [CardService],
   imports: [
     SequelizeModule.forFeature([Card, CardAssociation, Association]),
+    forwardRef(() => AuthModule),
     PhraseModule,
     TranslateModule,
     ImageModule,
     AssociationModule,
+    DictionaryModule,
   ],
   exports: [CardService],
 })

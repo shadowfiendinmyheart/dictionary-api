@@ -11,7 +11,6 @@ export class AssociationService {
   ) {}
 
   async create(dto: CreateAssociationDto) {
-    console.log('create', dto);
     const association = await this.associationRepository.create({
       translate_id: dto.translateId,
       image_id: dto.imageId,
@@ -23,6 +22,19 @@ export class AssociationService {
     const association = await this.associationRepository.findOne({
       where: { translate_id: dto.translateId, image_id: dto.imageId },
     });
+    return association;
+  }
+
+  async findOrCreate(dto: CreateAssociationDto) {
+    const [association, associationCreated] =
+      await this.associationRepository.findOrCreate({
+        where: { translate_id: dto.translateId, image_id: dto.imageId },
+        defaults: {
+          translate_id: dto.translateId,
+          image_id: dto.imageId,
+        },
+      });
+
     return association;
   }
 
