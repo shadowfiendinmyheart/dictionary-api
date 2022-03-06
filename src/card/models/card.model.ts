@@ -28,7 +28,7 @@ export class Card extends Model<Card> {
     example: '1',
     description: 'Счетчик по количеству правильных ответов на карточке',
   })
-  @Column({ type: DataType.INTEGER, allowNull: false })
+  @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
   counter: number;
 
   @ForeignKey(() => Phrase)

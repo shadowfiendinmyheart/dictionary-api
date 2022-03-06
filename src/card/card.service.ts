@@ -60,7 +60,6 @@ export class CardService {
     );
 
     const card = await this.cardRepository.create({
-      counter: 0,
       phrase_id: phrase.id,
       dictionary_id: dto.dictionaryId,
     });
@@ -94,40 +93,31 @@ export class CardService {
   }
 
   async getAllCardAssociationsInDictionary(dictionaryId: number) {
-    const cardsWithPhrase = await this.getAllCardsPhraseInDictionary(dictionaryId);
-    const cardIds = cardsWithPhrase.map((card) => card.id);
-
-    const cardAssociations = await this.cardAssociationRepository.findAll({
-      where: {
-        card_id: {
-          [Op.or]: cardIds,
-        },
-      },
-      include: {
+    const cards = await this.cardRepository.findAll({
+      where: { dictionary_id: dictionaryId },
+      include: [{
+        model: Phrase,
+      }, {
         model: Association,
         include: [Image, Translate],
-      },
+      }]
     });
 
-    const output = cardsWithPhrase.map((card) => {
+    const prettyCards = cards.map(card => {
       return {
-        card_id: card.id,
+        id: card.id,
         phrase: card.phrase.name,
         counter: card.counter,
-        assoctions: cardAssociations.reduce(
-          (result, cardAssociation) => {
-            if (cardAssociation.card_id === card.id) {
-              result.push({
-                translate: cardAssociation.association.translate.name,
-                image: cardAssociation.association.image.data,
-              });
-            }
-            return result;
-          }, []),
-      };
+        associations: card.associations.map((association) => {
+          return {
+            translate: association.translate.name,
+            image: association.image.data,
+          }
+        })
+      }
     });
 
-    return output;
+    return prettyCards;
   }
 
   findAll() {
