@@ -60,6 +60,7 @@ export class CardService {
     );
 
     const card = await this.cardRepository.create({
+      counter: 0,
       phrase_id: phrase.id,
       dictionary_id: dto.dictionaryId,
     });
@@ -112,13 +113,13 @@ export class CardService {
       return {
         card_id: card.id,
         phrase: card.phrase.name,
+        counter: card.counter,
         assoctions: cardAssociations.reduce(
           (result, cardAssociation) => {
             if (cardAssociation.card_id === card.id) {
               result.push({
                 translate: cardAssociation.association.translate.name,
                 image: cardAssociation.association.image.data,
-                counter: cardAssociation.counter
               });
             }
             return result;

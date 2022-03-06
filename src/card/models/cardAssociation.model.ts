@@ -21,9 +21,6 @@ export class CardAssociation extends Model<CardAssociation> {
   })
   id: number;
 
-  @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
-  counter: number;
-
   @BelongsTo(() => Card)
   card: Card;
 
