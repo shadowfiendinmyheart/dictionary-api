@@ -113,7 +113,6 @@ export class CardService {
   }
 
   async findOne(id: number) {
-    const userId = this.request.user.id;
     const card = await this.cardRepository.findOne({
       where: { id },
       include: [Dictionary],
@@ -133,7 +132,7 @@ export class CardService {
   async checkPrivate(cardId: number, userId: number) {
     const card = await this.cardRepository.findOne({
       where: { id: cardId },
-      include: [Dictionary]
+      include: [Dictionary],
     });
 
     if (card.dictionary.private && userId !== card.dictionary.user_id) {

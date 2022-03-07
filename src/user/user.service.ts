@@ -48,7 +48,7 @@ export class UserService {
 
   async changeUsername(username: string) {
     const user = this.request.user;
-    
+
     const updatedUser = await this.userRepository.update(
       { username: username },
       {

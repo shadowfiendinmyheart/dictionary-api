@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { ActionCardGuard } from '../guards/action-card.guard';
+import { ActionDictionaryGuard } from '../guards/action-dictionary.guard';
 import { CardService } from './card.service';
 import { CreateCardDto } from './dto/create-card.dto';
 import { GetCardDto } from './dto/get-card.dto';
@@ -28,7 +28,7 @@ export class CardController {
   @ApiOperation({ summary: 'Создание карточки' })
   @ApiResponse({ status: 201, type: Card })
   @Post()
-  @UseGuards(ActionCardGuard)
+  @UseGuards(ActionDictionaryGuard)
   create(@Body() createCardDto: CreateCardDto) {
     return this.cardService.create(createCardDto);
   }
@@ -59,7 +59,7 @@ export class CardController {
   @ApiOperation({ summary: 'Редактировать карточку' })
   @ApiResponse({ status: 200, type: GetCardDto })
   @Patch(':id')
-  @UseGuards(ActionCardGuard)
+  @UseGuards(ActionDictionaryGuard)
   update(@Param('id') id: string, @Body() updateCardDto: UpdateCardDto) {
     return this.cardService.update(+id, updateCardDto);
   }
@@ -67,7 +67,7 @@ export class CardController {
   @ApiOperation({ summary: 'Удалить карточку' })
   @ApiResponse({ status: 200, type: GetCardDto })
   @Delete(':id')
-  @UseGuards(ActionCardGuard)
+  @UseGuards(ActionDictionaryGuard)
   remove(@Param('id') id: string) {
     return this.cardService.remove(+id);
   }

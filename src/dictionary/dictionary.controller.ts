@@ -1,9 +1,19 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { Dictionary } from './models/dictionary.model';
 import { DictionaryService } from './dictionary.service';
 import { CreateDictionaryDto } from './dto/create-dictionary.dto';
+import { ActionDictionaryGuard } from 'src/guards/action-dictionary.guard';
 
 @ApiTags('Словарь')
 @UseGuards(JwtAuthGuard)
@@ -37,5 +47,14 @@ export class DictionaryController {
   @Get(':id')
   get(@Param('id') id: number) {
     return this.dictionaryService.getOneById(id);
+  }
+
+  @ApiOperation({ summary: 'Поменять private значение на противоположное' })
+  @ApiResponse({ status: 204 })
+  @Patch('/private/:id')
+  @HttpCode(204)
+  @UseGuards(ActionDictionaryGuard)
+  changePrivate(@Param('id') id: number) {
+    return this.dictionaryService.changePrivate(id);
   }
 }

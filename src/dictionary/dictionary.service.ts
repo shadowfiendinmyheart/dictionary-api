@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Request } from 'express';
 import { Dictionary } from './models/dictionary.model';
 import { CreateDictionaryDto } from './dto/create-dictionary.dto';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class DictionaryService {
@@ -81,6 +82,16 @@ export class DictionaryService {
     });
 
     return dictionaries;
+  }
+
+  async changePrivate(dictionaryId: number) {
+    const dictionary = await this.dictionaryRepository.update(
+      //https://stackoverflow.com/questions/52283896/toggle-a-boolean-column-with-sequelize
+      { private: Sequelize.literal('NOT private') },
+      { where: { id: dictionaryId } },
+    );
+
+    return dictionary;
   }
 
   private async checkExistDictionary(

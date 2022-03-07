@@ -1,13 +1,9 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { DictionaryService } from 'src/dictionary/dictionary.service';
 
 @Injectable()
-export class ActionCardGuard implements CanActivate {
+export class ActionDictionaryGuard implements CanActivate {
   constructor(private dictionaryService: DictionaryService) {}
 
   canActivate(
