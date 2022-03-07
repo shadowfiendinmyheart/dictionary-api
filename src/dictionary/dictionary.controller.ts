@@ -19,10 +19,17 @@ export class DictionaryController {
   }
 
   @ApiOperation({ summary: 'Получить все словари пользователя' })
-  @ApiResponse({ status: 200, type: Dictionary })
+  @ApiResponse({ status: 200, type: [Dictionary] })
   @Get('/all')
   getAll() {
     return this.dictionaryService.getAllByUserId();
+  }
+
+  @ApiOperation({ summary: 'Получить все публичные словари' })
+  @ApiResponse({ status: 200, type: [Dictionary] })
+  @Get('/public')
+  getAllPublic() {
+    return this.dictionaryService.getAllPublic();
   }
 
   @ApiOperation({ summary: 'Получить словарь пользователя' })

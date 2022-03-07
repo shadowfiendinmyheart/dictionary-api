@@ -35,10 +35,11 @@ export class DictionaryService {
   }
 
   async getAllByUserId(userId: number = this.request.user.id) {
-    const dictionary = await this.dictionaryRepository.findAll({
+    const dictionaries = await this.dictionaryRepository.findAll({
       where: { user_id: userId },
     });
-    return dictionary;
+
+    return dictionaries;
   }
 
   async getOneById(dictionaryId: number) {
@@ -72,6 +73,14 @@ export class DictionaryService {
     });
 
     return dictionary ? true : false;
+  }
+
+  async getAllPublic() {
+    const dictionaries = await this.dictionaryRepository.findAll({
+      where: { private: false },
+    });
+
+    return dictionaries;
   }
 
   private async checkExistDictionary(
