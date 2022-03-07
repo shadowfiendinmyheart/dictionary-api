@@ -9,13 +9,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { ActionCardGuard } from './action-card.guard';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { ActionCardGuard } from '../guards/action-card.guard';
 import { CardService } from './card.service';
 import { CreateCardDto } from './dto/create-card.dto';
 import { GetCardDto } from './dto/get-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { Card } from './models/card.model';
+import { PrivateCardGuard } from '../guards/private-card.guard';
+import { PrivateDictionaryGuard } from '../guards/private-dictionary.guard';
 
 @ApiTags('Карточка')
 @Controller('card')
@@ -34,6 +36,7 @@ export class CardController {
   @ApiOperation({ summary: 'Получить все карточки из словаря по id (словаря)' })
   @ApiResponse({ status: 200, type: GetCardDto, isArray: true })
   @Get('/dictionary/:id')
+  @UseGuards(PrivateDictionaryGuard)
   getAllByDictionary(@Param('id') id: string) {
     return this.cardService.getAllByDictionary(Number(id));
   }
@@ -48,7 +51,7 @@ export class CardController {
   @ApiOperation({ summary: 'Получить карточку по id' })
   @ApiResponse({ status: 200, type: GetCardDto })
   @Get(':id')
-  @UseGuards(ActionCardGuard)
+  @UseGuards(PrivateCardGuard)
   findOne(@Param('id') id: string) {
     return this.cardService.findOne(+id);
   }
@@ -56,6 +59,7 @@ export class CardController {
   @ApiOperation({ summary: 'Редактировать карточку' })
   @ApiResponse({ status: 200, type: GetCardDto })
   @Patch(':id')
+  @UseGuards(ActionCardGuard)
   update(@Param('id') id: string, @Body() updateCardDto: UpdateCardDto) {
     return this.cardService.update(+id, updateCardDto);
   }
@@ -63,6 +67,7 @@ export class CardController {
   @ApiOperation({ summary: 'Удалить карточку' })
   @ApiResponse({ status: 200, type: GetCardDto })
   @Delete(':id')
+  @UseGuards(ActionCardGuard)
   remove(@Param('id') id: string) {
     return this.cardService.remove(+id);
   }

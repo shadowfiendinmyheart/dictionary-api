@@ -119,7 +119,6 @@ export class CardService {
       include: [Dictionary],
     });
 
-    await this.dictionaryService.checkPrivate(card.dictionary, userId);
     return card;
   }
 
@@ -129,6 +128,22 @@ export class CardService {
 
   remove(id: number) {
     return `This action removes a #${id} card`;
+  }
+
+  async checkPrivate(cardId: number, userId: number) {
+    const card = await this.cardRepository.findOne({
+      where: { id: cardId },
+      include: [Dictionary]
+    });
+
+    if (card.dictionary.private && userId !== card.dictionary.user_id) {
+      throw new HttpException(
+        'У вас нет доступа к данной карточке',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    return true;
   }
 
   private async checkExistCard(phraseId: number, dictionaryId: number) {
