@@ -1,4 +1,7 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npm run prettier && git add --all
+npm run prettier
+npm run lint
+git add --all
+
