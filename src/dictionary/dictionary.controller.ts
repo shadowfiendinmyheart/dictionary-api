@@ -22,13 +22,13 @@ export class DictionaryController {
   @ApiResponse({ status: 200, type: Dictionary })
   @Get('/all')
   getAll() {
-    return this.dictionaryService.getDictionariesByUserId();
+    return this.dictionaryService.getAllByUserId();
   }
 
   @ApiOperation({ summary: 'Получить словарь пользователя' })
   @ApiResponse({ status: 200, type: Dictionary })
   @Get(':id')
   get(@Param('id') id: number) {
-    return this.dictionaryService.getDictionaryById(id);
+    return this.dictionaryService.getOneById(id);
   }
 }

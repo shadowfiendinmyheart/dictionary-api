@@ -15,7 +15,7 @@ export class DictionaryService {
   async createDictionary(dto: CreateDictionaryDto) {
     const userId = this.request.user.id;
 
-    const isExistDictionary = await this.checkDictionary(
+    const isExistDictionary = await this.checkExistDictionary(
       userId,
       dto.name,
       dto.language,
@@ -34,14 +34,14 @@ export class DictionaryService {
     return dictionary;
   }
 
-  async getDictionariesByUserId(userId: number = this.request.user.id) {
+  async getAllByUserId(userId: number = this.request.user.id) {
     const dictionary = await this.dictionaryRepository.findAll({
       where: { user_id: userId },
     });
     return dictionary;
   }
 
-  async getDictionaryById(dictionaryId: number) {
+  async getOneById(dictionaryId: number) {
     const userId = this.request.user.id;
     const dictionary = await this.dictionaryRepository.findOne({
       where: { id: dictionaryId },
@@ -60,7 +60,15 @@ export class DictionaryService {
     }
   }
 
-  private async checkDictionary(
+  async checkByUserId(userId: number, dictionaryId: number) {
+    const dictionary = await this.dictionaryRepository.findOne({
+      where: { id: dictionaryId, user_id: userId },
+    });
+
+    return dictionary ? true : false;
+  }
+
+  private async checkExistDictionary(
     userId: number,
     name: string,
     language: string,

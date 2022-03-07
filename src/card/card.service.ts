@@ -9,7 +9,6 @@ import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { Card } from './models/card.model';
 import { CardAssociation } from './models/cardAssociation.model';
-import { Op } from 'sequelize';
 import { Association } from 'src/association/entities/association.model';
 import { Translate } from 'src/translate/models/translate.model';
 import { Image } from 'src/image/models/image.model';
@@ -29,14 +28,13 @@ export class CardService {
     private translateService: TranslateService,
     private imageService: ImageService,
     private associationService: AssociationService,
-    private dictionaryService: DictionaryService
+    private dictionaryService: DictionaryService,
   ) {}
 
   async create(dto: CreateCardDto) {
-    // TODO: transaction
     const phrase = await this.phraseService.findOrCreate(dto.phrase);
 
-    const isCardExist = await this.checkCard(phrase.id, dto.dictionaryId);
+    const isCardExist = await this.checkExistCard(phrase.id, dto.dictionaryId);
     if (isCardExist) {
       throw new HttpException(
         'Такая карточка уже есть',
@@ -73,37 +71,27 @@ export class CardService {
       }),
     );
 
-    return card;
+    return {
+      id: card.id,
+      counter: card.counter,
+    };
   }
 
-  private async checkCard(phraseId: number, dictionaryId: number) {
-    const card = await this.cardRepository.findOne({
-      where: { phrase_id: phraseId, dictionary_id: dictionaryId },
-    });
-    return card ? true : false;
-  }
-
-  async getAllCardsPhraseInDictionary(dictionaryId: number) {
-    const cardsWithPhrase = await this.cardRepository.findAll({
-      where: { dictionary_id: dictionaryId },
-      include: Phrase,
-    });
-
-    return cardsWithPhrase;
-  }
-
-  async getAllCardAssociationsInDictionary(dictionaryId: number) {
+  async getAllByDictionary(dictionaryId: number) {
     const cards = await this.cardRepository.findAll({
       where: { dictionary_id: dictionaryId },
-      include: [{
-        model: Phrase,
-      }, {
-        model: Association,
-        include: [Image, Translate],
-      }]
+      include: [
+        {
+          model: Phrase,
+        },
+        {
+          model: Association,
+          include: [Image, Translate],
+        },
+      ],
     });
 
-    const prettyCards = cards.map(card => {
+    const prettyCards = cards.map((card) => {
       return {
         id: card.id,
         phrase: card.phrase.name,
@@ -112,9 +100,9 @@ export class CardService {
           return {
             translate: association.translate.name,
             image: association.image.data,
-          }
-        })
-      }
+          };
+        }),
+      };
     });
 
     return prettyCards;
@@ -128,11 +116,11 @@ export class CardService {
     const userId = this.request.user.id;
     const card = await this.cardRepository.findOne({
       where: { id },
-      include: [Dictionary]
+      include: [Dictionary],
     });
 
     await this.dictionaryService.checkPrivate(card.dictionary, userId);
-    return card ;
+    return card;
   }
 
   update(id: number, updateCardDto: UpdateCardDto) {
@@ -141,5 +129,12 @@ export class CardService {
 
   remove(id: number) {
     return `This action removes a #${id} card`;
+  }
+
+  private async checkExistCard(phraseId: number, dictionaryId: number) {
+    const card = await this.cardRepository.findOne({
+      where: { phrase_id: phraseId, dictionary_id: dictionaryId },
+    });
+    return card ? true : false;
   }
 }
