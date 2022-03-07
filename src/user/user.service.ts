@@ -33,12 +33,24 @@ export class UserService {
     return user;
   }
 
-  async changeUserPassword(password: string) {
+  async changePassword(password: string) {
     const user = this.request.user;
     const salt = await bcrypt.genSaltSync(10);
     const hashPassword = await bcrypt.hash(password, salt);
     const updatedUser = await this.userRepository.update(
       { password: hashPassword },
+      {
+        where: { id: user.id },
+      },
+    );
+    return updatedUser;
+  }
+
+  async changeUsername(username: string) {
+    const user = this.request.user;
+    
+    const updatedUser = await this.userRepository.update(
+      { username: username },
       {
         where: { id: user.id },
       },

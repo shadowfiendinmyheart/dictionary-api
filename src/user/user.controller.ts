@@ -9,11 +9,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateUserDto } from './dto/create-user.dto';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { User } from './models/user.model';
 import { UserService } from './user.service';
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
+import { UpdateUserUsernameDto } from './dto/update-user-username.dto';
 
 @ApiTags('Пользователь')
 @Controller('user')
@@ -42,11 +43,20 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Поменять пароль пользователя' })
-  @ApiResponse({ status: 204, type: null })
+  @ApiResponse({ status: 204 })
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   @Patch('/changePassword')
   changePassword(@Body() userDto: UpdateUserPasswordDto) {
-    return this.userService.changeUserPassword(userDto.password);
+    return this.userService.changePassword(userDto.password);
+  }
+
+  @ApiOperation({ summary: 'Поменять пароль пользователя' })
+  @ApiResponse({ status: 204 })
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(204)
+  @Patch('/changeUsername')
+  changeUsername(@Body() userDto: UpdateUserUsernameDto) {
+    return this.userService.changeUsername(userDto.username);
   }
 }
