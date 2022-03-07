@@ -138,7 +138,7 @@ export class CardService {
     if (card.dictionary.private && userId !== card.dictionary.user_id) {
       throw new HttpException(
         'У вас нет доступа к данной карточке',
-                  HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN,
       );
     }
 
