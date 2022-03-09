@@ -33,7 +33,6 @@ export class DictionaryController {
 
   @ApiOperation({ summary: 'Получить все словари пользователя' })
   @ApiResponse({ status: 200, type: [Dictionary] })
-  @UseGuards(ActionDictionaryGuard)
   @Get('/all')
   getAll() {
     return this.dictionaryService.getAllByUserId();
@@ -44,6 +43,13 @@ export class DictionaryController {
   @Get('/public')
   getAllPublic() {
     return this.dictionaryService.getAllPublic();
+  }
+
+  @ApiOperation({ summary: 'Получить все публичные словари пользователя' })
+  @ApiResponse({ status: 200, type: [Dictionary] })
+  @Get('/public/:id')
+  getAllPublicByUserId(@Param('id') id: number) {
+    return this.dictionaryService.getAllPublicByUserId(id);
   }
 
   @ApiOperation({ summary: 'Получить словарь пользователя' })

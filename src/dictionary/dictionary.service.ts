@@ -43,6 +43,22 @@ export class DictionaryService {
     return dictionaries;
   }
 
+  async getAllPublic() {
+    const dictionaries = await this.dictionaryRepository.findAll({
+      where: { private: false },
+    });
+
+    return dictionaries;
+  }
+
+  async getAllPublicByUserId(userId: number) {
+    const dictionaries = await this.dictionaryRepository.findAll({
+      where: { user_id: userId, private: false },
+    });
+
+    return dictionaries;
+  }
+
   async getOneById(dictionaryId: number) {
     const dictionary = await this.dictionaryRepository.findOne({
       where: { id: dictionaryId },
@@ -72,14 +88,6 @@ export class DictionaryService {
     });
 
     return dictionary ? true : false;
-  }
-
-  async getAllPublic() {
-    const dictionaries = await this.dictionaryRepository.findAll({
-      where: { private: false },
-    });
-
-    return dictionaries;
   }
 
   async changePrivate(dictionaryId: number) {
