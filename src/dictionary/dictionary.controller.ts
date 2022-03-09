@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Param,
@@ -14,6 +15,8 @@ import { Dictionary } from './models/dictionary.model';
 import { DictionaryService } from './dictionary.service';
 import { CreateDictionaryDto } from './dto/create-dictionary.dto';
 import { ActionDictionaryGuard } from 'src/guards/action-dictionary.guard';
+import { UpdateNameDictionaryDto } from './dto/update-name-dictionary.dto';
+import { PrivateDictionaryGuard } from 'src/guards/private-dictionary.guard';
 
 @ApiTags('Словарь')
 @UseGuards(JwtAuthGuard)
@@ -30,6 +33,7 @@ export class DictionaryController {
 
   @ApiOperation({ summary: 'Получить все словари пользователя' })
   @ApiResponse({ status: 200, type: [Dictionary] })
+  @UseGuards(ActionDictionaryGuard)
   @Get('/all')
   getAll() {
     return this.dictionaryService.getAllByUserId();
@@ -45,16 +49,40 @@ export class DictionaryController {
   @ApiOperation({ summary: 'Получить словарь пользователя' })
   @ApiResponse({ status: 200, type: Dictionary })
   @Get(':id')
+  @UseGuards(PrivateDictionaryGuard)
   get(@Param('id') id: number) {
     return this.dictionaryService.getOneById(id);
   }
 
-  @ApiOperation({ summary: 'Поменять private значение на противоположное' })
+  @ApiOperation({
+    summary: 'Поменять private значение словаря на противоположное',
+  })
   @ApiResponse({ status: 204 })
-  @Patch('/private/:id')
   @HttpCode(204)
   @UseGuards(ActionDictionaryGuard)
+  @Patch('/private/:id')
   changePrivate(@Param('id') id: number) {
     return this.dictionaryService.changePrivate(id);
+  }
+
+  @ApiOperation({ summary: 'Поменять название словаря' })
+  @ApiResponse({ status: 204 })
+  @HttpCode(204)
+  @UseGuards(ActionDictionaryGuard)
+  @Patch('/name/:id')
+  changeName(
+    @Param('id') id: number,
+    @Body() dictionaryDto: UpdateNameDictionaryDto,
+  ) {
+    return this.dictionaryService.changeName(id, dictionaryDto.name);
+  }
+
+  @ApiOperation({ summary: 'Удалить словарь' })
+  @ApiResponse({ status: 204 })
+  @HttpCode(204)
+  @UseGuards(ActionDictionaryGuard)
+  @Delete(':id')
+  delete(@Param('id') id: number) {
+    return this.dictionaryService.deleteById(id);
   }
 }

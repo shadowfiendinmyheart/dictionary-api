@@ -44,11 +44,9 @@ export class DictionaryService {
   }
 
   async getOneById(dictionaryId: number) {
-    const userId = this.request.user.id;
     const dictionary = await this.dictionaryRepository.findOne({
       where: { id: dictionaryId },
     });
-    this.checkPrivate(dictionaryId, userId);
 
     return dictionary;
   }
@@ -90,6 +88,23 @@ export class DictionaryService {
       { private: Sequelize.literal('NOT private') },
       { where: { id: dictionaryId } },
     );
+
+    return dictionary;
+  }
+
+  async changeName(dictionaryId: number, dictionaryName: string) {
+    const dictionary = await this.dictionaryRepository.update(
+      { name: dictionaryName },
+      { where: { id: dictionaryId } },
+    );
+
+    return dictionary;
+  }
+
+  async deleteById(dictionaryId: number) {
+    const dictionary = await this.dictionaryRepository.destroy({
+      where: { id: dictionaryId },
+    });
 
     return dictionary;
   }

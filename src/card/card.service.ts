@@ -1,21 +1,21 @@
+import { Request } from 'express';
+import { REQUEST } from '@nestjs/core';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { AssociationService } from 'src/association/association.service';
 import { ImageService } from 'src/image/image.service';
-import { Phrase } from 'src/phrase/models/phrase.model';
 import { PhraseService } from 'src/phrase/phrase.service';
 import { TranslateService } from 'src/translate/translate.service';
-import { CreateCardDto } from './dto/create-card.dto';
-import { UpdateCardDto } from './dto/update-card.dto';
+import { DictionaryService } from 'src/dictionary/dictionary.service';
+import { Phrase } from 'src/phrase/models/phrase.model';
 import { Card } from './models/card.model';
 import { CardAssociation } from './models/cardAssociation.model';
 import { Association } from 'src/association/entities/association.model';
 import { Translate } from 'src/translate/models/translate.model';
 import { Image } from 'src/image/models/image.model';
 import { Dictionary } from 'src/dictionary/models/dictionary.model';
-import { REQUEST } from '@nestjs/core';
-import { Request } from 'express';
-import { DictionaryService } from 'src/dictionary/dictionary.service';
+import { CreateCardDto } from './dto/create-card.dto';
+import { UpdateCardDto } from './dto/update-card.dto';
 
 @Injectable()
 export class CardService {
@@ -28,7 +28,6 @@ export class CardService {
     private translateService: TranslateService,
     private imageService: ImageService,
     private associationService: AssociationService,
-    private dictionaryService: DictionaryService,
   ) {}
 
   async create(dto: CreateCardDto) {

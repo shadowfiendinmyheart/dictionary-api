@@ -26,7 +26,7 @@ export class Card extends Model<Card> {
 
   @ApiProperty({
     example: '1',
-    description: 'Счетчик по количеству правильных ответов на карточке',
+    description: 'Счетчик по количеству правильных хуй на карточке',
   })
   @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
   counter: number;
