@@ -90,21 +90,33 @@ export class CardService {
       ],
     });
 
-    const prettyCards = cards.map((card) => {
-      return {
-        id: card.id,
-        phrase: card.phrase.name,
-        counter: card.counter,
-        associations: card.associations.map((association) => {
-          return {
-            translate: association.translate.name,
-            image: association.image.data,
-          };
-        }),
-      };
+    return this.makePrettyCards(cards);
+  }
+
+  async getPaginationByDictionary(
+    dictionaryId: number,
+    page: number,
+    size: number,
+  ) {
+    const pagination = await this.cardRepository.findAndCountAll({
+      where: { dictionary_id: dictionaryId },
+      limit: size,
+      offset: page * size,
+      include: [
+        {
+          model: Phrase,
+        },
+        {
+          model: Association,
+          include: [Image, Translate],
+        },
+      ],
     });
 
-    return prettyCards;
+    return {
+      count: pagination.count,
+      cards: await this.makePrettyCards(pagination.rows),
+    };
   }
 
   findAll() {
@@ -149,5 +161,21 @@ export class CardService {
       where: { phrase_id: phraseId, dictionary_id: dictionaryId },
     });
     return card ? true : false;
+  }
+
+  private async makePrettyCards(cards: Card[]) {
+    return cards.map((card) => {
+      return {
+        id: card.id,
+        phrase: card.phrase.name,
+        counter: card.counter,
+        associations: card.associations.map((association) => {
+          return {
+            translate: association.translate.name,
+            image: association.image.data,
+          };
+        }),
+      };
+    });
   }
 }

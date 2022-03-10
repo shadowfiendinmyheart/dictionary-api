@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
@@ -18,6 +19,7 @@ import { UpdateCardDto } from './dto/update-card.dto';
 import { Card } from './models/card.model';
 import { PrivateCardGuard } from '../guards/private-card.guard';
 import { PrivateDictionaryGuard } from '../guards/private-dictionary.guard';
+import { GetPaginationCardDto } from './dto/get-pagination-card.dto';
 
 @ApiTags('Карточка')
 @Controller('card')
@@ -34,11 +36,27 @@ export class CardController {
   }
 
   @ApiOperation({ summary: 'Получить все карточки из словаря по id (словаря)' })
-  @ApiResponse({ status: 200, type: GetCardDto, isArray: true })
+  @ApiResponse({ status: 200, type: [GetCardDto] })
   @Get('/dictionary/:id')
   @UseGuards(PrivateDictionaryGuard)
   getAllByDictionary(@Param('id') id: string) {
     return this.cardService.getAllByDictionary(Number(id));
+  }
+
+  @ApiOperation({ summary: 'Получить страницу из словаря по id (словаря)' })
+  @ApiResponse({ status: 200, type: GetPaginationCardDto })
+  @Get('/dictionary/pagination/:id')
+  @UseGuards(PrivateDictionaryGuard)
+  getPaginationByDictionary(
+    @Param('id') id: string,
+    @Query('page') page: string,
+    @Query('size') size: string,
+  ) {
+    return this.cardService.getPaginationByDictionary(
+      Number(id),
+      Number(page),
+      Number(size),
+    );
   }
 
   @ApiOperation({ summary: 'Получить все карточки пользователя' })
