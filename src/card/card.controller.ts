@@ -20,6 +20,7 @@ import { Card } from './models/card.model';
 import { PrivateCardGuard } from '../guards/private-card.guard';
 import { PrivateDictionaryGuard } from '../guards/private-dictionary.guard';
 import { GetPaginationCardDto } from './dto/get-pagination-card.dto';
+import { CardCounterMode } from './types';
 
 @ApiTags('Карточка')
 @Controller('card')
@@ -56,6 +57,26 @@ export class CardController {
       Number(id),
       Number(page),
       Number(size),
+    );
+  }
+
+  @ApiOperation({
+    summary: 'Получить случайные карточки из словаря по id (словаря)',
+  })
+  @ApiResponse({ status: 200, type: GetPaginationCardDto })
+  @Get('/dictionary/random/:id')
+  @UseGuards(PrivateDictionaryGuard)
+  getCounterByDictionary(
+    @Param('id') id: string,
+    @Query('counter') counter: string,
+    @Query('mode') mode: CardCounterMode,
+    @Query('size') size: string,
+  ) {
+    return this.cardService.getCounterByDictionary(
+      Number(id),
+      Number(size),
+      Number(counter),
+      Number(mode),
     );
   }
 

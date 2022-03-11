@@ -2,6 +2,8 @@ import { Request } from 'express';
 import { REQUEST } from '@nestjs/core';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
 import { AssociationService } from 'src/association/association.service';
 import { ImageService } from 'src/image/image.service';
 import { PhraseService } from 'src/phrase/phrase.service';
@@ -16,6 +18,7 @@ import { Image } from 'src/image/models/image.model';
 import { Dictionary } from 'src/dictionary/models/dictionary.model';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
+import { CardCounterMode } from './types';
 
 @Injectable()
 export class CardService {
@@ -119,6 +122,37 @@ export class CardService {
     };
   }
 
+  async getCounterByDictionary(
+    dictionaryId: number,
+    size: number,
+    counter: number,
+    mode: CardCounterMode,
+  ) {
+    const op = this.getOpByMode(mode);
+
+    const cards = await this.cardRepository.findAll({
+      where: {
+        dictionary_id: dictionaryId,
+        counter: {
+          [op]: counter,
+        },
+      },
+      order: [Sequelize.fn('RANDOM')],
+      limit: size,
+      include: [
+        {
+          model: Phrase,
+        },
+        {
+          model: Association,
+          include: [Image, Translate],
+        },
+      ],
+    });
+
+    return this.makePrettyCards(cards);
+  }
+
   findAll() {
     return `This action returns all card`;
   }
@@ -161,6 +195,25 @@ export class CardService {
       where: { phrase_id: phraseId, dictionary_id: dictionaryId },
     });
     return card ? true : false;
+  }
+
+  private getOpByMode(mode: CardCounterMode) {
+    switch (mode) {
+      case CardCounterMode.GreaterThan:
+        return Op.gt;
+
+      case CardCounterMode.LessThan:
+        return Op.lt;
+
+      case CardCounterMode.Equals:
+        return Op.eq;
+
+      case CardCounterMode.GreaterOrEqual:
+        return Op.gte;
+
+      default:
+        throw new HttpException('Неверный запрос', HttpStatus.BAD_REQUEST);
+    }
   }
 
   private async makePrettyCards(cards: Card[]) {
