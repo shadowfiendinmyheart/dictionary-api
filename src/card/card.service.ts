@@ -211,6 +211,9 @@ export class CardService {
       case CardCounterMode.GreaterOrEqual:
         return Op.gte;
 
+      case CardCounterMode.LessOrEqual:
+        return Op.lte;
+
       default:
         throw new HttpException('Неверный запрос', HttpStatus.BAD_REQUEST);
     }
