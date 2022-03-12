@@ -33,7 +33,7 @@ export class DictionaryController {
 
   @ApiOperation({ summary: 'Получить все словари пользователя' })
   @ApiResponse({ status: 200, type: [Dictionary] })
-  @Get('/all')
+  @Get()
   getAll() {
     return this.dictionaryService.getAllByUserId();
   }

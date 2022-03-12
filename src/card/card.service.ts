@@ -73,10 +73,7 @@ export class CardService {
       }),
     );
 
-    return {
-      id: card.id,
-      counter: card.counter,
-    };
+    return card;
   }
 
   async getAllByDictionary(dictionaryId: number) {
@@ -153,11 +150,31 @@ export class CardService {
     return this.makePrettyCards(cards);
   }
 
-  findAll() {
-    return `This action returns all card`;
+  async getAllByUserId() {
+    const userId = this.request.user.id;
+
+    const cards = await this.cardRepository.findAll({
+      include: [
+        {
+          model: Phrase,
+        },
+        {
+          model: Association,
+          include: [Image, Translate],
+        },
+        {
+          model: Dictionary,
+          where: {
+            user_id: userId,
+          },
+        },
+      ],
+    });
+
+    return this.makePrettyCards(cards);
   }
 
-  async findOne(id: number) {
+  async getOne(id: number) {
     const card = await this.cardRepository.findOne({
       where: { id },
       include: [Dictionary],
@@ -170,8 +187,12 @@ export class CardService {
     return `This action updates a #${id} card`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} card`;
+  async deleteById(cardId: number) {
+    const dictionary = await this.cardRepository.destroy({
+      where: { id: cardId },
+    });
+
+    return dictionary;
   }
 
   async checkPrivate(cardId: number, userId: number) {

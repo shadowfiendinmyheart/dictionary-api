@@ -75,18 +75,18 @@ export class CardController {
   }
 
   @ApiOperation({ summary: 'Получить все карточки пользователя' })
-  @ApiResponse({ status: 200, type: GetCardDto, isArray: true })
+  @ApiResponse({ status: 200, type: [GetCardDto] })
   @Get()
-  findAll() {
-    return this.cardService.findAll();
+  getAllByUserId() {
+    return this.cardService.getAllByUserId();
   }
 
   @ApiOperation({ summary: 'Получить карточку по id' })
   @ApiResponse({ status: 200, type: GetCardDto })
   @Get(':id')
   @UseGuards(PrivateCardGuard)
-  findOne(@Param('id') id: string) {
-    return this.cardService.findOne(+id);
+  getOne(@Param('id') id: string) {
+    return this.cardService.getOne(Number(id));
   }
 
   @ApiOperation({ summary: 'Редактировать карточку' })
@@ -98,10 +98,10 @@ export class CardController {
   }
 
   @ApiOperation({ summary: 'Удалить карточку' })
-  @ApiResponse({ status: 200, type: GetCardDto })
+  @ApiResponse({ status: 204 })
   @Delete(':id')
   @UseGuards(ActionDictionaryGuard)
   remove(@Param('id') id: string) {
-    return this.cardService.remove(+id);
+    return this.cardService.deleteById(Number(id));
   }
 }
