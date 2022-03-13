@@ -31,12 +31,16 @@ export class CardService {
     private translateService: TranslateService,
     private imageService: ImageService,
     private associationService: AssociationService,
+    private dictionaryService: DictionaryService,
   ) {}
 
   async create(dto: CreateCardDto) {
     const phrase = await this.phraseService.findOrCreate(dto.phrase);
 
-    const isCardExist = await this.checkExistCard(phrase.id, dto.dictionaryId);
+    const isCardExist = await this.checkByPhraseInDictionary(
+      phrase.id,
+      dto.dictionaryId,
+    );
     if (isCardExist) {
       throw new HttpException(
         'Такая карточка уже есть',
@@ -183,8 +187,23 @@ export class CardService {
     return card;
   }
 
-  update(id: number, updateCardDto: UpdateCardDto) {
-    return `This action updates a #${id} card`;
+  async changePhrase(id: number, phrase: string) {
+    const newPhrase = await this.phraseService.findOrCreate(phrase);
+    const updatedCard = await this.cardRepository.update(
+      { phrase_id: newPhrase.id },
+      { where: { id } },
+    );
+
+    return updatedCard;
+  }
+
+  async increaseCounter(id: number) {
+    const updatedCard = await this.cardRepository.increment('counter', {
+      by: 1,
+      where: { id },
+    });
+
+    return updatedCard;
   }
 
   async deleteById(cardId: number) {
@@ -211,7 +230,23 @@ export class CardService {
     return true;
   }
 
-  private async checkExistCard(phraseId: number, dictionaryId: number) {
+  async checkByUserId(userId: number, cardId: number) {
+    const card = await this.cardRepository.findOne({
+      where: { id: cardId },
+      include: [Dictionary],
+    });
+
+    if (!card) {
+      throw new HttpException('Карточки не существует', HttpStatus.NOT_FOUND);
+    }
+
+    return this.dictionaryService.checkByUserId(userId, card.dictionary.id);
+  }
+
+  private async checkByPhraseInDictionary(
+    phraseId: number,
+    dictionaryId: number,
+  ) {
     const card = await this.cardRepository.findOne({
       where: { phrase_id: phraseId, dictionary_id: dictionaryId },
     });

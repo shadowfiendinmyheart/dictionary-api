@@ -87,6 +87,10 @@ export class DictionaryService {
       where: { id: dictionaryId, user_id: userId },
     });
 
+    if (!dictionary) {
+      throw new HttpException('Словаря не существует', HttpStatus.NOT_FOUND);
+    }
+
     return dictionary ? true : false;
   }
 

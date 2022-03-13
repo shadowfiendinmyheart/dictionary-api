@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Query,
+  HttpCode,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
@@ -15,12 +16,13 @@ import { ActionDictionaryGuard } from '../guards/action-dictionary.guard';
 import { CardService } from './card.service';
 import { CreateCardDto } from './dto/create-card.dto';
 import { GetCardDto } from './dto/get-card.dto';
-import { UpdateCardDto } from './dto/update-card.dto';
+import { UpdateCardDto, UpdateNameCardDto } from './dto/update-card.dto';
 import { Card } from './models/card.model';
 import { PrivateCardGuard } from '../guards/private-card.guard';
 import { PrivateDictionaryGuard } from '../guards/private-dictionary.guard';
 import { GetPaginationCardDto } from './dto/get-pagination-card.dto';
 import { CardCounterMode, PaginationQuery, RandomQuery } from './types';
+import { ActionCardGuard } from 'src/guards/action-card.guard';
 
 @ApiTags('Карточка')
 @Controller('card')
@@ -32,8 +34,8 @@ export class CardController {
   @ApiResponse({ status: 201, type: Card })
   @Post()
   @UseGuards(ActionDictionaryGuard)
-  create(@Body() createCardDto: CreateCardDto) {
-    return this.cardService.create(createCardDto);
+  create(@Body() cardDto: CreateCardDto) {
+    return this.cardService.create(cardDto);
   }
 
   @ApiOperation({ summary: 'Получить все карточки из словаря по id (словаря)' })
@@ -89,18 +91,28 @@ export class CardController {
     return this.cardService.getOne(Number(id));
   }
 
-  @ApiOperation({ summary: 'Редактировать карточку' })
-  @ApiResponse({ status: 200, type: GetCardDto })
-  @Patch(':id')
-  @UseGuards(ActionDictionaryGuard)
-  update(@Param('id') id: string, @Body() updateCardDto: UpdateCardDto) {
-    return this.cardService.update(+id, updateCardDto);
+  @ApiOperation({ summary: 'Поменять фразу карточки' })
+  @ApiResponse({ status: 204 })
+  @HttpCode(204)
+  @Patch('/phrase/:id')
+  @UseGuards(ActionCardGuard)
+  changePhrase(@Param('id') id: string, @Body() cardDto: UpdateNameCardDto) {
+    return this.cardService.changePhrase(Number(id), cardDto.phrase);
+  }
+
+  @ApiOperation({ summary: 'Повысить counter карточки на 1' })
+  @ApiResponse({ status: 204 })
+  @HttpCode(204)
+  @Patch('/counter/:id')
+  @UseGuards(ActionCardGuard)
+  increaseCounter(@Param('id') id: string) {
+    return this.cardService.increaseCounter(Number(id));
   }
 
   @ApiOperation({ summary: 'Удалить карточку' })
   @ApiResponse({ status: 204 })
   @Delete(':id')
-  @UseGuards(ActionDictionaryGuard)
+  @UseGuards(ActionCardGuard)
   remove(@Param('id') id: string) {
     return this.cardService.deleteById(Number(id));
   }
