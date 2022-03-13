@@ -1,4 +1,9 @@
-import { IntersectionType, PartialType, PickType } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  IntersectionType,
+  PartialType,
+  PickType,
+} from '@nestjs/swagger';
 import { CreateImageDto } from 'src/image/dto/create-image.dto';
 import { CreatePhraseDto } from 'src/phrase/dto/create-phrase.dto';
 import { CreateCardDto } from './create-card.dto';
@@ -11,4 +16,10 @@ export class UpdateNameCardDto extends PickType(CreateCardDto, [
 export class UpdateAssociationsCardDto extends IntersectionType(
   CreatePhraseDto,
   CreateImageDto,
-) {}
+) {
+  @ApiProperty({
+    example: 'Cat - катарсис - кот',
+    description: 'Описание ассоциации',
+  })
+  readonly description: string;
+}

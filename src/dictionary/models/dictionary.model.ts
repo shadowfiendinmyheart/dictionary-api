@@ -11,14 +11,8 @@ import {
 import { Card } from 'src/card/models/card.model';
 import { User } from 'src/user/models/user.model';
 
-interface DictionaryCreationAttrs {
-  name: string;
-  language: string;
-  user_id: number;
-}
-
 @Table({ tableName: 'dictionary' })
-export class Dictionary extends Model<Dictionary, DictionaryCreationAttrs> {
+export class Dictionary extends Model<Dictionary> {
   @ApiProperty({ example: '1', description: 'Уникальный идентификатор' })
   @Column({
     type: DataType.INTEGER,
@@ -28,13 +22,24 @@ export class Dictionary extends Model<Dictionary, DictionaryCreationAttrs> {
   })
   id: number;
 
-  @ApiProperty({ example: 'animals', description: 'Название словаря' })
+  @ApiProperty({ example: 'Фауна Африки', description: 'Название словаря' })
   @Column({ type: DataType.STRING, unique: false, allowNull: false })
   name: string;
 
-  @ApiProperty({ example: 'english', description: 'Язык словаря' })
+  @ApiProperty({
+    example: 'Список животных африки для начального изучения',
+    description: 'Описание словаря',
+  })
+  @Column({ type: DataType.STRING, unique: false, allowNull: true })
+  description: string;
+
+  @ApiProperty({ example: 'english', description: 'Язык с которого переводят' })
   @Column({ type: DataType.STRING, allowNull: false })
-  language: string;
+  from: string;
+
+  @ApiProperty({ example: 'russian', description: 'Язык на который переводят' })
+  @Column({ type: DataType.STRING, allowNull: false })
+  to: string;
 
   @ApiProperty({
     example: 'true',

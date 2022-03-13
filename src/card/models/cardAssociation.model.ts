@@ -21,6 +21,13 @@ export class CardAssociation extends Model<CardAssociation> {
   })
   id: number;
 
+  @ApiProperty({
+    example: 'Cat - катарсис - кот',
+    description: 'Описание ассоциации',
+  })
+  @Column({ type: DataType.STRING, unique: false, allowNull: true })
+  description: string;
+
   @BelongsTo(() => Card)
   card: Card;
 

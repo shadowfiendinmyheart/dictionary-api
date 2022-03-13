@@ -7,12 +7,23 @@ export class CreateCardDto {
   })
   readonly dictionaryId: number;
 
-  @ApiProperty({ example: 'cat', description: 'Иностранная фраза' })
+  @ApiProperty({ example: 'Cat', description: 'Иностранная фраза' })
   readonly phrase: string;
 
   @ApiProperty({
-    example: '[{translate: кот, image: http://funny-cat.jpeg}]',
+    example: 'Домашний питомец',
+    description: 'Описание карточки',
+  })
+  readonly description: string;
+
+  @ApiProperty({
+    example:
+      '[{translate: кот, description: cat - катарсис - кот, image: http://funny-cat.jpeg}]',
     description: 'Массив объектов ассоциаций',
   })
-  readonly associations: { translate: string; image: string }[];
+  readonly associations: {
+    translate: string;
+    image: string;
+    description: string;
+  }[];
 }

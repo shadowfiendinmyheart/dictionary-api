@@ -26,10 +26,17 @@ export class Card extends Model<Card> {
 
   @ApiProperty({
     example: '1',
-    description: 'Счетчик по количеству правильных хуй на карточке',
+    description: 'Счетчик по количеству правильных на карточке',
   })
   @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
   counter: number;
+
+  @ApiProperty({
+    example: 'Домашний питомец',
+    description: 'Описание карточки',
+  })
+  @Column({ type: DataType.STRING, unique: false, allowNull: true })
+  description: string;
 
   @ForeignKey(() => Phrase)
   @Column({ type: DataType.INTEGER, allowNull: false })

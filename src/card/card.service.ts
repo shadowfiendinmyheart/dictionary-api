@@ -17,10 +17,7 @@ import { Translate } from 'src/translate/models/translate.model';
 import { Image } from 'src/image/models/image.model';
 import { Dictionary } from 'src/dictionary/models/dictionary.model';
 import { CreateCardDto } from './dto/create-card.dto';
-import {
-  UpdateAssociationsCardDto,
-  UpdateCardDto,
-} from './dto/update-card.dto';
+import { UpdateAssociationsCardDto } from './dto/update-card.dto';
 import { CardCounterMode } from './types';
 
 @Injectable()
@@ -52,28 +49,35 @@ export class CardService {
     }
 
     const associations = await Promise.all(
-      dto.associations.map(async (associate) => {
-        const translate = await this.translateService.findOrCreate(
-          associate.translate,
+      dto.associations.map(async (association) => {
+        const createdTranslate = await this.translateService.findOrCreate(
+          association.translate,
         );
-        const image = await this.imageService.findOrCreate(associate.image);
-        const association = await this.associationService.findOrCreate({
-          imageId: image.id,
-          translateId: translate.id,
+        const createdImage = await this.imageService.findOrCreate(
+          association.image,
+        );
+        const createdAssociation = await this.associationService.findOrCreate({
+          imageId: createdImage.id,
+          translateId: createdTranslate.id,
         });
 
-        return association;
+        return {
+          id: createdAssociation.id,
+          description: association.description,
+        };
       }),
     );
 
     const card = await this.cardRepository.create({
       phrase_id: phrase.id,
+      description: dto.description,
       dictionary_id: dto.dictionaryId,
     });
 
     await Promise.all(
       associations.map(async (association) => {
         await this.cardAssociationRepository.create({
+          description: association.description,
           card_id: card.id,
           assoctiation_id: association.id,
         });
@@ -255,6 +259,7 @@ export class CardService {
     });
 
     const cardAssociation = this.cardAssociationRepository.create({
+      description: dto.description,
       assoctiation_id: association.id,
       card_id: cardId,
     });

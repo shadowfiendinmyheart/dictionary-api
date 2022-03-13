@@ -3,6 +3,7 @@ import { CreateCardDto } from './create-card.dto';
 
 export class GetCardDto extends PickType(CreateCardDto, [
   'associations',
+  'description',
   'phrase',
 ] as const) {
   @ApiProperty({

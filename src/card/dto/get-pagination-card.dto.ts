@@ -11,8 +11,9 @@ export class GetPaginationCardDto {
   // TODO: find way to fix example
   @ApiProperty({
     example: `{
-    "phrase": "cat",
-    "associations": "[{translate: кот, image: http://funny-cat.jpeg}]",
+    "phrase": "Сat",
+    "description": "Домашний питомец",
+    "associations": "[{translate: Кот, image: http://funny-cat.jpeg}]",
     "id": 1,
     "counter": "0"
   }`,

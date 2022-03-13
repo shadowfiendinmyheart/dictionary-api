@@ -19,7 +19,8 @@ export class DictionaryService {
     const isExistDictionary = await this.checkExistDictionary(
       userId,
       dto.name,
-      dto.language,
+      dto.from,
+      dto.to,
     );
     if (isExistDictionary) {
       throw new HttpException(
@@ -124,10 +125,11 @@ export class DictionaryService {
   private async checkExistDictionary(
     userId: number,
     name: string,
-    language: string,
+    from: string,
+    to: string,
   ) {
     const dictionary = await this.dictionaryRepository.findOne({
-      where: { user_id: userId, name, language },
+      where: { user_id: userId, name, from, to },
     });
 
     return dictionary ? dictionary.id : false;
