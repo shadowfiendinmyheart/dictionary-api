@@ -42,3 +42,11 @@ export class RandomQuery {
   })
   size: number;
 }
+
+export class DeleteAssociationQuery {
+  @ApiProperty({
+    example: '0',
+    description: 'Id ассоциации',
+  })
+  association: number;
+}

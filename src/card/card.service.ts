@@ -17,7 +17,10 @@ import { Translate } from 'src/translate/models/translate.model';
 import { Image } from 'src/image/models/image.model';
 import { Dictionary } from 'src/dictionary/models/dictionary.model';
 import { CreateCardDto } from './dto/create-card.dto';
-import { UpdateCardDto } from './dto/update-card.dto';
+import {
+  UpdateAssociationsCardDto,
+  UpdateCardDto,
+} from './dto/update-card.dto';
 import { CardCounterMode } from './types';
 
 @Injectable()
@@ -181,7 +184,7 @@ export class CardService {
   async getOne(id: number) {
     const card = await this.cardRepository.findOne({
       where: { id },
-      include: [Dictionary],
+      include: [Dictionary, Association],
     });
 
     return card;
@@ -207,11 +210,11 @@ export class CardService {
   }
 
   async deleteById(cardId: number) {
-    const dictionary = await this.cardRepository.destroy({
+    const deletedCard = await this.cardRepository.destroy({
       where: { id: cardId },
     });
 
-    return dictionary;
+    return deletedCard;
   }
 
   async checkPrivate(cardId: number, userId: number) {
@@ -241,6 +244,30 @@ export class CardService {
     }
 
     return this.dictionaryService.checkByUserId(userId, card.dictionary.id);
+  }
+
+  async addAssociation(cardId: number, dto: UpdateAssociationsCardDto) {
+    const translate = await this.translateService.findOrCreate(dto.name);
+    const image = await this.imageService.findOrCreate(dto.data);
+    const association = await this.associationService.findOrCreate({
+      imageId: image.id,
+      translateId: translate.id,
+    });
+
+    const cardAssociation = this.cardAssociationRepository.create({
+      assoctiation_id: association.id,
+      card_id: cardId,
+    });
+
+    return cardAssociation;
+  }
+
+  async deleteAssociation(cardId: number, associationId: number) {
+    const deletedAssociation = await this.cardAssociationRepository.destroy({
+      where: { card_id: cardId, assoctiation_id: associationId },
+    });
+
+    return deletedAssociation;
   }
 
   private async checkByPhraseInDictionary(
@@ -283,6 +310,7 @@ export class CardService {
         counter: card.counter,
         associations: card.associations.map((association) => {
           return {
+            id: association.id,
             translate: association.translate.name,
             image: association.image.data,
           };
