@@ -15,7 +15,10 @@ import { Dictionary } from './models/dictionary.model';
 import { DictionaryService } from './dictionary.service';
 import { CreateDictionaryDto } from './dto/create-dictionary.dto';
 import { ActionDictionaryGuard } from 'src/guards/action-dictionary.guard';
-import { UpdateNameDictionaryDto } from './dto/update-name-dictionary.dto';
+import {
+  UpdateDescriptionDictionaryDto,
+  UpdateNameDictionaryDto,
+} from './dto/update-dictionary.dto';
 import { PrivateDictionaryGuard } from 'src/guards/private-dictionary.guard';
 
 @ApiTags('Словарь')
@@ -82,6 +85,21 @@ export class DictionaryController {
     @Body() dictionaryDto: UpdateNameDictionaryDto,
   ) {
     return this.dictionaryService.changeName(id, dictionaryDto.name);
+  }
+
+  @ApiOperation({ summary: 'Поменять описание словаря' })
+  @ApiResponse({ status: 204 })
+  @HttpCode(204)
+  @UseGuards(ActionDictionaryGuard)
+  @Patch('/description/:id')
+  changeDescription(
+    @Param('id') id: number,
+    @Body() dictionaryDto: UpdateDescriptionDictionaryDto,
+  ) {
+    return this.dictionaryService.changeDescription(
+      id,
+      dictionaryDto.description,
+    );
   }
 
   @ApiOperation({ summary: 'Удалить словарь' })

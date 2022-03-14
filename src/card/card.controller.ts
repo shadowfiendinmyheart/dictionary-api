@@ -18,21 +18,18 @@ import { CreateCardDto } from './dto/create-card.dto';
 import { GetCardDto } from './dto/get-card.dto';
 import {
   UpdateAssociationsCardDto,
-  UpdateCardDto,
-  UpdateNameCardDto,
+  UpdateDescriptionAssociationDto,
+  UpdateDescriptionCardDto,
+  UpdatePhraseCardDto,
 } from './dto/update-card.dto';
 import { Card } from './models/card.model';
 import { PrivateCardGuard } from '../guards/private-card.guard';
 import { PrivateDictionaryGuard } from '../guards/private-dictionary.guard';
 import { GetPaginationCardDto } from './dto/get-pagination-card.dto';
-import {
-  CardCounterMode,
-  DeleteAssociationQuery,
-  PaginationQuery,
-  RandomQuery,
-} from './types';
+import { DeleteAssociationQuery, PaginationQuery, RandomQuery } from './types';
 import { ActionCardGuard } from 'src/guards/action-card.guard';
 import { CardAssociation } from './models/cardAssociation.model';
+import { ActionCardAssociationGuard } from 'src/guards/action-card-association.guard';
 
 @ApiTags('Карточка')
 @Controller('card')
@@ -106,8 +103,20 @@ export class CardController {
   @HttpCode(204)
   @UseGuards(ActionCardGuard)
   @Patch('/phrase/:id')
-  changePhrase(@Param('id') id: string, @Body() cardDto: UpdateNameCardDto) {
+  changePhrase(@Param('id') id: string, @Body() cardDto: UpdatePhraseCardDto) {
     return this.cardService.changePhrase(Number(id), cardDto.phrase);
+  }
+
+  @ApiOperation({ summary: 'Поменять описание карточки' })
+  @ApiResponse({ status: 204 })
+  @HttpCode(204)
+  @UseGuards(ActionCardGuard)
+  @Patch('/description/:id')
+  changeDescription(
+    @Param('id') id: string,
+    @Body() cardDto: UpdateDescriptionCardDto,
+  ) {
+    return this.cardService.changeDescription(Number(id), cardDto.description);
   }
 
   @ApiOperation({ summary: 'Повысить counter карточки на 1' })
@@ -138,7 +147,22 @@ export class CardController {
     return this.cardService.addAssociation(Number(id), cardDto);
   }
 
-  @ApiOperation({ summary: 'Удалить карточку' })
+  @ApiOperation({ summary: 'Поменять описание ассоциации' })
+  @ApiResponse({ status: 204 })
+  @HttpCode(204)
+  @UseGuards(ActionCardAssociationGuard)
+  @Patch('/associationdescription/:id')
+  changeCardAssociationDescription(
+    @Param('id') id: string,
+    @Body() cardDto: UpdateDescriptionAssociationDto,
+  ) {
+    return this.cardService.changeAssociationDescription(
+      Number(id),
+      cardDto.description,
+    );
+  }
+
+  @ApiOperation({ summary: 'Удалить ассоциацию в карточке' })
   @ApiResponse({ status: 204 })
   @UseGuards(ActionCardGuard)
   @Delete('/association/:id')

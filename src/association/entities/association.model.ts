@@ -40,4 +40,8 @@ export class Association extends Model<Association> {
 
   @BelongsTo(() => Image)
   image: Image;
+
+  // TODO: find way to make it clear
+  // for 'description: association.CardAssociation.description' in cardservice.makePrettyCards
+  CardAssociation: CardAssociation;
 }

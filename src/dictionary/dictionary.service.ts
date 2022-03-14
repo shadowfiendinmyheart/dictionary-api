@@ -114,6 +114,15 @@ export class DictionaryService {
     return dictionary;
   }
 
+  async changeDescription(dictionaryId: number, dictionaryDescription: string) {
+    const dictionary = await this.dictionaryRepository.update(
+      { description: dictionaryDescription },
+      { where: { id: dictionaryId } },
+    );
+
+    return dictionary;
+  }
+
   async deleteById(dictionaryId: number) {
     const dictionary = await this.dictionaryRepository.destroy({
       where: { id: dictionaryId },

@@ -9,7 +9,12 @@ import { CreatePhraseDto } from 'src/phrase/dto/create-phrase.dto';
 import { CreateCardDto } from './create-card.dto';
 
 export class UpdateCardDto extends PartialType(CreateCardDto) {}
-export class UpdateNameCardDto extends PickType(CreateCardDto, [
+
+export class UpdateDescriptionCardDto extends PickType(CreateCardDto, [
+  'description',
+] as const) {}
+
+export class UpdatePhraseCardDto extends PickType(CreateCardDto, [
   'phrase',
 ] as const) {}
 
@@ -23,3 +28,8 @@ export class UpdateAssociationsCardDto extends IntersectionType(
   })
   readonly description: string;
 }
+
+export class UpdateDescriptionAssociationDto extends PickType(
+  UpdateAssociationsCardDto,
+  ['description'] as const,
+) {}

@@ -194,10 +194,19 @@ export class CardService {
     return card;
   }
 
-  async changePhrase(id: number, phrase: string) {
-    const newPhrase = await this.phraseService.findOrCreate(phrase);
+  async changePhrase(id: number, cardPhrase: string) {
+    const newPhrase = await this.phraseService.findOrCreate(cardPhrase);
     const updatedCard = await this.cardRepository.update(
       { phrase_id: newPhrase.id },
+      { where: { id } },
+    );
+
+    return updatedCard;
+  }
+
+  async changeDescription(id: number, cardDescription: string) {
+    const updatedCard = await this.cardRepository.update(
+      { description: cardDescription },
       { where: { id } },
     );
 
@@ -250,6 +259,22 @@ export class CardService {
     return this.dictionaryService.checkByUserId(userId, card.dictionary.id);
   }
 
+  async checkCardAssociationByUserId(
+    userId: number,
+    cardAssociationId: number,
+  ) {
+    const cardAssociation = await this.cardAssociationRepository.findOne({
+      where: { id: cardAssociationId },
+      include: [Card],
+    });
+
+    if (!cardAssociation) {
+      throw new HttpException('Ассоциации не существует', HttpStatus.NOT_FOUND);
+    }
+
+    return this.checkByUserId(userId, cardAssociation.card.id);
+  }
+
   async addAssociation(cardId: number, dto: UpdateAssociationsCardDto) {
     const translate = await this.translateService.findOrCreate(dto.name);
     const image = await this.imageService.findOrCreate(dto.data);
@@ -263,6 +288,18 @@ export class CardService {
       assoctiation_id: association.id,
       card_id: cardId,
     });
+
+    return cardAssociation;
+  }
+
+  async changeAssociationDescription(
+    id: number,
+    associationDescription: string,
+  ) {
+    const cardAssociation = await this.cardAssociationRepository.update(
+      { description: associationDescription },
+      { where: { id } },
+    );
 
     return cardAssociation;
   }
@@ -312,10 +349,12 @@ export class CardService {
       return {
         id: card.id,
         phrase: card.phrase.name,
+        description: card.description,
         counter: card.counter,
         associations: card.associations.map((association) => {
           return {
             id: association.id,
+            description: association.CardAssociation.description,
             translate: association.translate.name,
             image: association.image.data,
           };
