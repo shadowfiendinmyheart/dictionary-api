@@ -1,8 +1,15 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const Reverso = require('reverso-api');
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { CreateTranslateDto } from './dto/create-translate.dto';
+import {
+  CreateTranslateDto,
+  GetTranslatePhraseDto,
+} from './dto/create-translate.dto';
 import { UpdateTranslateDto } from './dto/update-translate.dto';
 import { Translate } from './models/translate.model';
+
+const reverso = new Reverso();
 
 @Injectable()
 export class TranslateService {
@@ -49,5 +56,11 @@ export class TranslateService {
 
   remove(id: number) {
     return `This action removes a #${id} translate`;
+  }
+
+  async translatePhrase(dto: GetTranslatePhraseDto) {
+    const request = await reverso.getContext(dto.phrase, dto.from, dto.to);
+
+    return request;
   }
 }

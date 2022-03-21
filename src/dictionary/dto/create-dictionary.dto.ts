@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Languages } from 'src/translate/types';
 
 export class CreateDictionaryDto {
   @ApiProperty({ example: 'Фауна Африки', description: 'Название словаря' })
@@ -11,10 +12,10 @@ export class CreateDictionaryDto {
   readonly description: string;
 
   @ApiProperty({ example: 'english', description: 'Язык с которого переводят' })
-  readonly from: string;
+  readonly from: Languages;
 
   @ApiProperty({ example: 'russian', description: 'Язык на который переводят' })
-  readonly to: string;
+  readonly to: Languages;
 
   @ApiProperty({
     example: 'true',

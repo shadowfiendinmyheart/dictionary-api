@@ -9,6 +9,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { Card } from 'src/card/models/card.model';
+import { Languages } from 'src/translate/types';
 import { User } from 'src/user/models/user.model';
 
 @Table({ tableName: 'dictionary' })
@@ -35,11 +36,11 @@ export class Dictionary extends Model<Dictionary> {
 
   @ApiProperty({ example: 'english', description: 'Язык с которого переводят' })
   @Column({ type: DataType.STRING, allowNull: false })
-  from: string;
+  from: Languages;
 
   @ApiProperty({ example: 'russian', description: 'Язык на который переводят' })
   @Column({ type: DataType.STRING, allowNull: false })
-  to: string;
+  to: Languages;
 
   @ApiProperty({
     example: 'true',

@@ -6,16 +6,30 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { TranslateService } from './translate.service';
-import { CreateTranslateDto } from './dto/create-translate.dto';
+import {
+  CreateTranslateDto,
+  GetTranslatePhraseDto,
+} from './dto/create-translate.dto';
 import { UpdateTranslateDto } from './dto/update-translate.dto';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 
 @ApiTags('Перевод')
+@UseGuards(JwtAuthGuard)
 @Controller('translate')
 export class TranslateController {
   constructor(private readonly translateService: TranslateService) {}
+
+  @ApiOperation({ summary: 'Получить перевод фразы со стороннего ресурса' })
+  @Get('/phrase')
+  // Переделать запрос под query
+  // почему он не триггерится
+  translatePhrase(@Body() translateDto: GetTranslatePhraseDto) {
+    return this.translateService.translatePhrase(translateDto);
+  }
 
   @ApiOperation({ summary: 'Создание перевода' })
   @Post()
