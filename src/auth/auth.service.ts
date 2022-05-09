@@ -24,13 +24,24 @@ export class AuthService {
   }
 
   async registration(userDto: CreateUserDto) {
-    const candidate = await this.userService.getUserByEmail(userDto.email);
-    if (candidate) {
+    const checkByEmail = await this.userService.getUserByEmail(userDto.email);
+    if (checkByEmail) {
       throw new HttpException(
         'Пользователь с таким email уже существует',
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    const checkByUsername = await this.userService.getUserByUsername(
+      userDto.username,
+    );
+    if (checkByUsername) {
+      throw new HttpException(
+        'Пользователь с таким username уже существует',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const salt = await bcrypt.genSaltSync(10);
     const hashPassword = await bcrypt.hash(userDto.password, salt);
     const user = await this.userService.createUser({
@@ -41,7 +52,7 @@ export class AuthService {
   }
 
   private async generateToken(user: User) {
-    const payload = { id: user.id, email: user.email };
+    const payload = { id: user.id, email: user.email, username: user.username };
     return {
       token: this.jwtService.sign(payload),
     };
