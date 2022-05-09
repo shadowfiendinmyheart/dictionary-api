@@ -23,9 +23,10 @@ import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 export class TranslateController {
   constructor(private readonly translateService: TranslateService) {}
 
-  @ApiOperation({ summary: 'Получить перевод фразы со стороннего ресурса' })
+  @ApiOperation({
+    summary: 'Получить перевод (+ примеры) фразы со стороннего ресурса',
+  })
   @Get('/phrase')
-  // Переделать запрос под query
   // почему он не триггерится
   translatePhrase(@Body() translateDto: GetTranslatePhraseDto) {
     return this.translateService.translatePhrase(translateDto);

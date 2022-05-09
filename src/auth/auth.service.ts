@@ -1,9 +1,12 @@
 import {
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Request } from 'express';
+import { REQUEST } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
@@ -14,6 +17,7 @@ import { MakeAuthDto } from './dto/get-auth.dto';
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(REQUEST) private request: Request,
     private userService: UserService,
     private jwtService: JwtService,
   ) {}
@@ -48,6 +52,12 @@ export class AuthService {
       ...userDto,
       password: hashPassword,
     });
+    return this.generateToken(user);
+  }
+
+  async refresh() {
+    const userReq = this.request.user;
+    const user = await this.userService.getUserByEmail(userReq.email);
     return this.generateToken(user);
   }
 

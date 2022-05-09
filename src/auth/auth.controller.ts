@@ -1,5 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { GetAuthDto, MakeAuthDto } from './dto/get-auth.dto';
@@ -21,5 +22,13 @@ export class AuthController {
   @Post('/registration')
   registration(@Body() userDto: CreateUserDto) {
     return this.authService.registration(userDto);
+  }
+
+  @ApiOperation({ summary: 'Обновить токен' })
+  @ApiResponse({ status: 200, type: GetAuthDto })
+  @UseGuards(JwtAuthGuard)
+  @Post('/refresh')
+  refresh() {
+    return this.authService.refresh();
   }
 }
