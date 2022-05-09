@@ -33,6 +33,11 @@ export class UserService {
     return user;
   }
 
+  async getUserByUsername(username: string) {
+    const user = await this.userRepository.findOne({ where: { username } });
+    return user;
+  }
+
   async changePassword(password: string) {
     const user = this.request.user;
     const salt = await bcrypt.genSaltSync(10);

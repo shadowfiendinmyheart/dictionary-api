@@ -9,6 +9,7 @@ import * as bcrypt from 'bcryptjs';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/models/user.model';
+import { MakeAuthDto } from './dto/get-auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(userDto: CreateUserDto) {
+  async login(userDto: MakeAuthDto) {
     const user = await this.validateUser(userDto);
     return this.generateToken(user);
   }
@@ -46,8 +47,15 @@ export class AuthService {
     };
   }
 
-  private async validateUser(userDto: CreateUserDto) {
-    const user = await this.userService.getUserByEmail(userDto.email);
+  private async validateUser(userDto: Partial<CreateUserDto>) {
+    const user = userDto.email
+      ? await this.userService.getUserByEmail(userDto.email)
+      : await this.userService.getUserByUsername(userDto.username);
+
+    if (!user) {
+      throw new UnauthorizedException({ message: 'Неверные данные для входа' });
+    }
+
     const passwordEquals = await bcrypt.compare(
       userDto.password,
       user.password,
@@ -55,6 +63,7 @@ export class AuthService {
     if (user && passwordEquals) {
       return user;
     }
+
     throw new UnauthorizedException({ message: 'Неверные данные для входа' });
   }
 }
