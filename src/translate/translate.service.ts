@@ -8,6 +8,7 @@ import {
 } from './dto/create-translate.dto';
 import { UpdateTranslateDto } from './dto/update-translate.dto';
 import { Translate } from './models/translate.model';
+import { TranslationsResponse } from './types';
 
 const reverso = new Reverso();
 
@@ -59,8 +60,22 @@ export class TranslateService {
   }
 
   async translatePhrase(dto: GetTranslatePhraseDto) {
-    const request = await reverso.getContext(dto.phrase, dto.from, dto.to);
-
-    return request;
+    try {
+      const request: TranslationsResponse = await reverso.getContext(
+        dto.phrase,
+        dto.from,
+        dto.to,
+      );
+      request.translation = request.translation.map((t) => {
+        // api returns extra letters for some words
+        if (t.slice(-2) === ' f' || t.slice(-2) === ' m') {
+          return t.slice(0, -2);
+        }
+        return t;
+      });
+      return request;
+    } catch (error) {
+      console.log('error translatePhrase', error);
+    }
   }
 }

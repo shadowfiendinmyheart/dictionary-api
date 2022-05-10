@@ -7,3 +7,17 @@ export enum Languages {
   French = 'french',
   Japanese = 'japanese',
 }
+
+export interface Example {
+  id: number;
+  from: string;
+  to: string;
+}
+
+export type TranslationsResponse = {
+  text: string;
+  from: string;
+  to: string;
+  translation: string[];
+  examples: Example[];
+};

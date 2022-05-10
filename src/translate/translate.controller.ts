@@ -26,7 +26,7 @@ export class TranslateController {
   @ApiOperation({
     summary: 'Получить перевод (+ примеры) фразы со стороннего ресурса',
   })
-  @Get('/phrase')
+  @Post('/phrase')
   // почему он не триггерится
   translatePhrase(@Body() translateDto: GetTranslatePhraseDto) {
     return this.translateService.translatePhrase(translateDto);
