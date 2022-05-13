@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
 import { Image } from './models/image.model';
+import getImages from './utils';
 
 @Injectable()
 export class ImageService {
@@ -31,6 +32,11 @@ export class ImageService {
     });
 
     return image;
+  }
+
+  async getImagesFromOuterApi(text: string) {
+    const imageResponse = await getImages(text);
+    return imageResponse;
   }
 
   findAll() {
