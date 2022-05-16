@@ -13,16 +13,23 @@ import { ImageService } from './image.service';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
 import { getImagesFromOuterApiQuery } from './types';
+import { CreateImageFileDto } from './dto/create-image-file-dto';
 
 @ApiTags('Изображение')
 @Controller('image')
 export class ImageController {
   constructor(private readonly imageService: ImageService) {}
 
-  @ApiOperation({ summary: 'Создание изображения' })
+  @ApiOperation({ summary: 'Получение изображений со стороннего api' })
   @Get('/outer/')
   getImagesFromOuterApi(@Query() query: getImagesFromOuterApiQuery) {
     return this.imageService.getImagesFromOuterApi(query.text);
+  }
+
+  @ApiOperation({ summary: 'Получение изображений со стороннего api' })
+  @Post('/create/')
+  createImage(@Body() createImageFileDto: CreateImageFileDto) {
+    return this.imageService.createImageFile(createImageFileDto);
   }
 
   @ApiOperation({ summary: 'Создание изображения' })
