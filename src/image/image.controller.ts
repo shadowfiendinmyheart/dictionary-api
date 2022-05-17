@@ -21,12 +21,12 @@ export class ImageController {
   constructor(private readonly imageService: ImageService) {}
 
   @ApiOperation({ summary: 'Получение изображений со стороннего api' })
-  @Get('/outer/')
+  @Get('/find/')
   getImagesFromOuterApi(@Query() query: getImagesFromOuterApiQuery) {
     return this.imageService.getImagesFromOuterApi(query.text);
   }
 
-  @ApiOperation({ summary: 'Получение изображений со стороннего api' })
+  @ApiOperation({ summary: 'Сохранение изображения на облаке' })
   @Post('/create/')
   createImage(@Body() createImageFileDto: CreateImageFileDto) {
     return this.imageService.createImageFile(createImageFileDto);
