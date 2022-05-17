@@ -36,7 +36,6 @@ export class DictionaryController {
 
   @ApiOperation({ summary: 'Получить все словари пользователя' })
   @ApiResponse({ status: 200, type: [Dictionary] })
-  @UseGuards(ActionDictionaryGuard)
   @Get()
   getAll() {
     return this.dictionaryService.getAllByUserId();
