@@ -17,6 +17,8 @@ import { Image } from './image/models/image.model';
 import { CardAssociation } from './card/models/cardAssociation.model';
 import { Association } from './association/entities/association.model';
 import { AssociationModule } from './association/association.module';
+import { DescriptionModule } from './description/description.module';
+import { Description } from './description/models/description.model';
 
 @Module({
   controllers: [],
@@ -41,6 +43,7 @@ import { AssociationModule } from './association/association.module';
         Card,
         Association,
         CardAssociation,
+        Description,
       ],
       autoLoadModels: true,
       synchronize: true,
@@ -59,6 +62,7 @@ import { AssociationModule } from './association/association.module';
     CardModule,
     ImageModule,
     AssociationModule,
+    DescriptionModule,
   ],
 })
 export class AppModule {}

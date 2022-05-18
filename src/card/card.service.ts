@@ -19,6 +19,8 @@ import { Dictionary } from 'src/dictionary/models/dictionary.model';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateAssociationsCardDto } from './dto/update-card.dto';
 import { CardCounterMode } from './types';
+import { DescriptionService } from 'src/description/description.service';
+import { Description } from 'src/description/models/description.model';
 
 @Injectable()
 export class CardService {
@@ -32,10 +34,14 @@ export class CardService {
     private imageService: ImageService,
     private associationService: AssociationService,
     private dictionaryService: DictionaryService,
+    private descriptionService: DescriptionService,
   ) {}
 
   async create(dto: CreateCardDto) {
     const phrase = await this.phraseService.findOrCreate(dto.phrase);
+    const description = await this.descriptionService.findOrCreate(
+      dto.description,
+    );
 
     const isCardExist = await this.checkByPhraseInDictionary(
       phrase.id,
@@ -48,21 +54,31 @@ export class CardService {
       );
     }
 
-    const associations = await Promise.all(
+    const associationItems = await Promise.all(
       dto.associations.map(async (association) => {
-        const createdTranslate = await this.translateService.findOrCreate(
-          association.translate,
+        const createdTranslations = await Promise.all(
+          association.translate.map((translate) => {
+            return this.translateService.findOrCreate(translate);
+          }),
         );
+
         const createdImage = await this.imageService.findOrCreate(
           association.image,
         );
-        const createdAssociation = await this.associationService.findOrCreate({
-          imageId: createdImage.id,
-          translateId: createdTranslate.id,
-        });
+
+        const createdAssociations = await Promise.all(
+          createdTranslations.map(async (translation) => {
+            return await this.associationService.findOrCreate({
+              imageId: createdImage.id,
+              translateId: translation.id,
+            });
+          }),
+        );
 
         return {
-          id: createdAssociation.id,
+          associationIds: createdAssociations.map(
+            (association) => association.id,
+          ),
           description: association.description,
         };
       }),
@@ -70,17 +86,23 @@ export class CardService {
 
     const card = await this.cardRepository.create({
       phrase_id: phrase.id,
-      description: dto.description,
+      description_id: description.id,
       dictionary_id: dto.dictionaryId,
     });
 
     await Promise.all(
-      associations.map(async (association) => {
-        await this.cardAssociationRepository.create({
-          description: association.description,
-          card_id: card.id,
-          assoctiation_id: association.id,
-        });
+      associationItems.map(async (association) => {
+        const description = await this.descriptionService.findOrCreate(
+          association.description,
+        );
+
+        for (const associationId of association.associationIds) {
+          await this.cardAssociationRepository.create({
+            description_id: description.id,
+            card_id: card.id,
+            assoctiation_id: associationId,
+          });
+        }
       }),
     );
 
@@ -101,7 +123,7 @@ export class CardService {
       ],
     });
 
-    return this.makePrettyCards(cards);
+    return cards.map((card) => this.makePrettyCard(card));
   }
 
   async getPaginationByDictionary(
@@ -126,11 +148,11 @@ export class CardService {
 
     return {
       count: pagination.count,
-      cards: await this.makePrettyCards(pagination.rows),
+      cards: pagination.rows.map((card) => this.makePrettyCard(card)),
     };
   }
 
-  async getCounterByDictionary(
+  async getCardsByCounter(
     dictionaryId: number,
     size: number,
     counter: number,
@@ -158,7 +180,7 @@ export class CardService {
       ],
     });
 
-    return this.makePrettyCards(cards);
+    return cards.map((card) => this.makePrettyCard(card));
   }
 
   async getAllByUserId() {
@@ -182,16 +204,24 @@ export class CardService {
       ],
     });
 
-    return this.makePrettyCards(cards);
+    return cards.map((card) => this.makePrettyCard(card));
   }
 
   async getOne(id: number) {
     const card = await this.cardRepository.findOne({
       where: { id },
-      include: [Dictionary, Association],
+      include: [
+        Dictionary,
+        Description,
+        Phrase,
+        {
+          model: Association,
+          include: [Image, Translate],
+        },
+      ],
     });
 
-    return card;
+    return this.makePrettyCard(card);
   }
 
   async changePhrase(id: number, cardPhrase: string) {
@@ -204,9 +234,12 @@ export class CardService {
     return updatedCard;
   }
 
-  async changeDescription(id: number, cardDescription: string) {
+  async changeDescription(id: number, newDescription: string) {
+    const description = await this.descriptionService.findOrCreate(
+      newDescription,
+    );
     const updatedCard = await this.cardRepository.update(
-      { description: cardDescription },
+      { description_id: description.id },
       { where: { id } },
     );
 
@@ -283,8 +316,11 @@ export class CardService {
       translateId: translate.id,
     });
 
+    const description = await this.descriptionService.findOrCreate(
+      dto.description,
+    );
     const cardAssociation = this.cardAssociationRepository.create({
-      description: dto.description,
+      description_id: description.id,
       assoctiation_id: association.id,
       card_id: cardId,
     });
@@ -296,8 +332,11 @@ export class CardService {
     id: number,
     associationDescription: string,
   ) {
+    const description = await this.descriptionService.findOrCreate(
+      associationDescription,
+    );
     const cardAssociation = await this.cardAssociationRepository.update(
-      { description: associationDescription },
+      { description_id: description.id },
       { where: { id } },
     );
 
@@ -344,22 +383,38 @@ export class CardService {
     }
   }
 
-  private async makePrettyCards(cards: Card[]) {
-    return cards.map((card) => {
-      return {
-        id: card.id,
-        phrase: card.phrase.name,
-        description: card.description,
-        counter: card.counter,
-        associations: card.associations.map((association) => {
-          return {
+  private async makePrettyCard(card: Card) {
+    return {
+      id: card.id,
+      phrase: card.phrase.name,
+      description: card.description.text,
+      counter: card.counter,
+      associations: card.associations.reduce((prev, association) => {
+        const findedIndex = prev.findIndex((p) => {
+          return (
+            p.image === association.image.data &&
+            p.description_id === association.CardAssociation.description_id
+          );
+        });
+
+        if (findedIndex > -1) {
+          prev[findedIndex].translate = [
+            ...prev[findedIndex].translate,
+            association.translate.name,
+          ];
+          return prev;
+        }
+
+        return [
+          ...prev,
+          {
             id: association.id,
-            description: association.CardAssociation.description,
-            translate: association.translate.name,
+            description_id: association.CardAssociation.description_id,
+            translate: [association.translate.name],
             image: association.image.data,
-          };
-        }),
-      };
-    });
+          },
+        ];
+      }, []),
+    };
   }
 }

@@ -11,6 +11,7 @@ import { ImageModule } from 'src/image/image.module';
 import { AssociationModule } from 'src/association/association.module';
 import { DictionaryModule } from 'src/dictionary/dictionary.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { DescriptionModule } from 'src/description/description.module';
 
 @Module({
   controllers: [CardController],
@@ -23,6 +24,7 @@ import { AuthModule } from 'src/auth/auth.module';
     ImageModule,
     AssociationModule,
     DictionaryModule,
+    DescriptionModule,
   ],
   exports: [CardService],
 })

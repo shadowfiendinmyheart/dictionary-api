@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   BelongsTo,
-  BelongsToMany,
   Column,
   DataType,
   ForeignKey,
@@ -10,6 +9,7 @@ import {
 } from 'sequelize-typescript';
 import { Card } from './card.model';
 import { Association } from '../../association/entities/association.model';
+import { Description } from 'src/description/models/description.model';
 
 @Table({ tableName: 'card_association', timestamps: false })
 export class CardAssociation extends Model<CardAssociation> {
@@ -22,12 +22,12 @@ export class CardAssociation extends Model<CardAssociation> {
   })
   id: number;
 
-  @ApiProperty({
-    example: 'Cat - катарсис - кот',
-    description: 'Описание ассоциации',
-  })
-  @Column({ type: DataType.STRING, unique: false, allowNull: true })
-  description: string;
+  @ForeignKey(() => Description)
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  description_id: number;
+
+  @BelongsTo(() => Description)
+  description: Description;
 
   @BelongsTo(() => Card)
   card: Card;

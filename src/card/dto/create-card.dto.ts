@@ -18,11 +18,11 @@ export class CreateCardDto {
 
   @ApiProperty({
     example:
-      '[{translate: кот, description: cat - катарсис - кот, image: http://funny-cat.jpeg}]',
+      '[{translate: [кот, кошка, котяра], description: cat - катарсис - кот, image: http://funny-cat.jpeg}]',
     description: 'Массив объектов ассоциаций',
   })
   readonly associations: {
-    translate: string;
+    translate: string[];
     image: string;
     description: string;
   }[];

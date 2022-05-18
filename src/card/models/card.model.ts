@@ -8,6 +8,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { Description } from 'src/description/models/description.model';
 import { Dictionary } from 'src/dictionary/models/dictionary.model';
 import { Phrase } from 'src/phrase/models/phrase.model';
 import { Association } from '../../association/entities/association.model';
@@ -31,12 +32,12 @@ export class Card extends Model<Card> {
   @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
   counter: number;
 
-  @ApiProperty({
-    example: 'Домашний питомец',
-    description: 'Описание карточки',
-  })
-  @Column({ type: DataType.STRING, unique: false, allowNull: true })
-  description: string;
+  @ForeignKey(() => Description)
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  description_id: number;
+
+  @BelongsTo(() => Description)
+  description: Description;
 
   @ForeignKey(() => Phrase)
   @Column({ type: DataType.INTEGER, allowNull: false })
@@ -46,7 +47,7 @@ export class Card extends Model<Card> {
   phrase: Phrase;
 
   @BelongsToMany(() => Association, () => CardAssociation)
-  associations: Association[];
+  associations: Array<Association & { CardAssociation: CardAssociation }>;
 
   @ForeignKey(() => Dictionary)
   @Column({ type: DataType.INTEGER, allowNull: false })

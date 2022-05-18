@@ -74,8 +74,8 @@ export class CardController {
   @ApiResponse({ status: 200, type: [GetCardDto] })
   @UseGuards(PrivateDictionaryGuard)
   @Get('/dictionary/random/:id')
-  getCounterByDictionary(@Param('id') id: string, @Query() query: RandomQuery) {
-    return this.cardService.getCounterByDictionary(
+  getCardsByCounter(@Param('id') id: string, @Query() query: RandomQuery) {
+    return this.cardService.getCardsByCounter(
       Number(id),
       Number(query.size),
       Number(query.counter),
