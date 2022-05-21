@@ -113,9 +113,8 @@ export class CardService {
     const cards = await this.cardRepository.findAll({
       where: { dictionary_id: dictionaryId },
       include: [
-        {
-          model: Phrase,
-        },
+        Phrase,
+        Description,
         {
           model: Association,
           include: [Image, Translate],
@@ -136,9 +135,8 @@ export class CardService {
       limit: size,
       offset: page * size,
       include: [
-        {
-          model: Phrase,
-        },
+        Phrase,
+        Description,
         {
           model: Association,
           include: [Image, Translate],
@@ -170,9 +168,8 @@ export class CardService {
       order: [Sequelize.fn('RANDOM')],
       limit: size,
       include: [
-        {
-          model: Phrase,
-        },
+        Phrase,
+        Description,
         {
           model: Association,
           include: [Image, Translate],
@@ -188,9 +185,8 @@ export class CardService {
 
     const cards = await this.cardRepository.findAll({
       include: [
-        {
-          model: Phrase,
-        },
+        Phrase,
+        Description,
         {
           model: Association,
           include: [Image, Translate],
@@ -383,7 +379,7 @@ export class CardService {
     }
   }
 
-  private async makePrettyCard(card: Card) {
+  private makePrettyCard(card: Card) {
     return {
       id: card.id,
       phrase: card.phrase.name,
