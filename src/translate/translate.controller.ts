@@ -27,7 +27,6 @@ export class TranslateController {
     summary: 'Получить перевод (+ примеры) фразы со стороннего ресурса',
   })
   @Post('/phrase')
-  // почему он не триггерится
   translatePhrase(@Body() translateDto: GetTranslatePhraseDto) {
     return this.translateService.translatePhrase(translateDto);
   }

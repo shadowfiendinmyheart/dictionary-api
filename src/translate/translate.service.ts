@@ -66,9 +66,16 @@ export class TranslateService {
         dto.from,
         dto.to,
       );
+      // delete "Show more"
+      request.translation = request.translation.slice(0, -1);
       request.translation = request.translation.map((t) => {
         // api returns extra letters for some words
-        if (t.slice(-2) === ' f' || t.slice(-2) === ' m') {
+        const extraLetter = t.slice(-2);
+        if (
+          extraLetter === ' f' ||
+          extraLetter === ' m' ||
+          extraLetter === ' n'
+        ) {
           return t.slice(0, -2);
         }
         return t;
