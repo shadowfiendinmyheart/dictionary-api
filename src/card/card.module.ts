@@ -23,7 +23,7 @@ import { DescriptionModule } from 'src/description/description.module';
     TranslateModule,
     ImageModule,
     AssociationModule,
-    DictionaryModule,
+    forwardRef(() => DictionaryModule),
     DescriptionModule,
   ],
   exports: [CardService],

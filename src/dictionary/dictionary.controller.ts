@@ -27,11 +27,18 @@ import { PrivateDictionaryGuard } from 'src/guards/private-dictionary.guard';
 export class DictionaryController {
   constructor(private dictionaryService: DictionaryService) {}
 
-  @ApiOperation({ summary: 'Создание cловаря' })
+  @ApiOperation({ summary: 'Создание словаря' })
   @ApiResponse({ status: 200, type: Dictionary })
   @Post()
   create(@Body() dictionaryDto: CreateDictionaryDto) {
     return this.dictionaryService.createDictionary(dictionaryDto);
+  }
+
+  @ApiOperation({ summary: 'Добавить публичный словарь' })
+  @ApiResponse({ status: 200, type: Dictionary })
+  @Post('/add/:id')
+  add(@Param('id') id: number) {
+    return this.dictionaryService.addPublicDictionary(id);
   }
 
   @ApiOperation({ summary: 'Получить все словари пользователя' })

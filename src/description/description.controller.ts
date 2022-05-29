@@ -6,15 +6,23 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { DescriptionService } from './description.service';
 import { CreateDescriptionDto } from './dto/create-description.dto';
 import { UpdateDescriptionDto } from './dto/update-description.dto';
+import { Description } from './models/description.model';
 
+@ApiTags('Описание')
+@UseGuards(JwtAuthGuard)
 @Controller('description')
 export class DescriptionController {
   constructor(private readonly descriptionService: DescriptionService) {}
 
+  @ApiOperation({ summary: 'Создание описания' })
+  @ApiResponse({ status: 200, type: Description })
   @Post()
   create(@Body() createDescriptionDto: CreateDescriptionDto) {
     return this.descriptionService.create(createDescriptionDto);

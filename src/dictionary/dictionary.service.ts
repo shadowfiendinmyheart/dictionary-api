@@ -1,16 +1,25 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectModel } from '@nestjs/sequelize';
 import { Request } from 'express';
 import { Dictionary } from './models/dictionary.model';
 import { CreateDictionaryDto } from './dto/create-dictionary.dto';
 import { Sequelize } from 'sequelize-typescript';
+import { CardService } from 'src/card/card.service';
 
 @Injectable()
 export class DictionaryService {
   constructor(
     @InjectModel(Dictionary) private dictionaryRepository: typeof Dictionary,
     @Inject(REQUEST) private request: Request,
+    @Inject(forwardRef(() => CardService))
+    private cardService: CardService,
   ) {}
 
   async createDictionary(dto: CreateDictionaryDto) {
@@ -42,6 +51,41 @@ export class DictionaryService {
     });
 
     return dictionaries;
+  }
+
+  async addPublicDictionary(publicDictionaryId: number) {
+    const userId = this.request.user.id;
+
+    const dictionary = await this.getOneById(publicDictionaryId);
+
+    const isExistDictionary = await this.checkExistDictionary(
+      userId,
+      dictionary.name,
+      dictionary.from,
+      dictionary.to,
+    );
+    if (isExistDictionary) {
+      throw new HttpException(
+        'У вас уже есть такой словарь',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const copyDictionary = await this.dictionaryRepository.create({
+      name: dictionary.name,
+      description: dictionary.description,
+      to: dictionary.to,
+      from: dictionary.from,
+      private: true,
+      user_id: userId,
+    });
+
+    const cards = await this.cardService.getAllByDictionary(dictionary.id);
+    for (const card of cards) {
+      await this.cardService.copyCardToDictionary(card.id, copyDictionary.id);
+    }
+
+    return copyDictionary;
   }
 
   async getAllPublic() {

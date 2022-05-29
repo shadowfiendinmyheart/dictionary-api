@@ -1,6 +1,12 @@
 import { Request } from 'express';
 import { REQUEST } from '@nestjs/core';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
@@ -33,6 +39,7 @@ export class CardService {
     private translateService: TranslateService,
     private imageService: ImageService,
     private associationService: AssociationService,
+    @Inject(forwardRef(() => DictionaryService))
     private dictionaryService: DictionaryService,
     private descriptionService: DescriptionService,
   ) {}
@@ -123,6 +130,33 @@ export class CardService {
     });
 
     return cards.map((card) => this.makePrettyCard(card));
+  }
+
+  async copyCardToDictionary(cardId: number, dictionaryId: number) {
+    const card = await this.cardRepository.findOne({
+      where: { id: cardId },
+    });
+
+    const cardAssociations = await this.cardAssociationRepository.findAll({
+      where: { card_id: cardId },
+    });
+
+    const copyCard = await this.cardRepository.create({
+      phrase_id: card.phrase_id,
+      description_id: card.description_id,
+      dictionary_id: dictionaryId,
+      counter: 0,
+    });
+
+    for (const cardAssociation of cardAssociations) {
+      await this.cardAssociationRepository.create({
+        description_id: cardAssociation.description_id,
+        card_id: copyCard.id,
+        assoctiation_id: cardAssociation.assoctiation_id,
+      });
+    }
+
+    return copyCard;
   }
 
   async getPaginationByDictionary(
