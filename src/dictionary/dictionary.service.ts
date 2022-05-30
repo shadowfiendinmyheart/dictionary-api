@@ -12,6 +12,7 @@ import { Dictionary } from './models/dictionary.model';
 import { CreateDictionaryDto } from './dto/create-dictionary.dto';
 import { Sequelize } from 'sequelize-typescript';
 import { CardService } from 'src/card/card.service';
+import { User } from 'src/user/models/user.model';
 
 @Injectable()
 export class DictionaryService {
@@ -48,6 +49,12 @@ export class DictionaryService {
   async getAllByUserId(userId: number = this.request.user.id) {
     const dictionaries = await this.dictionaryRepository.findAll({
       where: { user_id: userId },
+      include: [
+        {
+          model: User,
+          attributes: ['username'],
+        },
+      ],
     });
 
     return dictionaries;
@@ -91,6 +98,12 @@ export class DictionaryService {
   async getAllPublic() {
     const dictionaries = await this.dictionaryRepository.findAll({
       where: { private: false },
+      include: [
+        {
+          model: User,
+          attributes: ['username'],
+        },
+      ],
     });
 
     return dictionaries;
@@ -99,6 +112,12 @@ export class DictionaryService {
   async getAllPublicByUserId(userId: number) {
     const dictionaries = await this.dictionaryRepository.findAll({
       where: { user_id: userId, private: false },
+      include: [
+        {
+          model: User,
+          attributes: ['username'],
+        },
+      ],
     });
 
     return dictionaries;
@@ -107,6 +126,12 @@ export class DictionaryService {
   async getOneById(dictionaryId: number) {
     const dictionary = await this.dictionaryRepository.findOne({
       where: { id: dictionaryId },
+      include: [
+        {
+          model: User,
+          attributes: ['username'],
+        },
+      ],
     });
 
     return dictionary;
