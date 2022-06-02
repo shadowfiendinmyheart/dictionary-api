@@ -5,6 +5,7 @@ import {
   DataType,
   ForeignKey,
   HasMany,
+  Length,
   Model,
   Table,
 } from 'sequelize-typescript';
@@ -24,6 +25,7 @@ export class Dictionary extends Model<Dictionary> {
   id: number;
 
   @ApiProperty({ example: 'Фауна Африки', description: 'Название словаря' })
+  @Length({ min: 2, max: 128 })
   @Column({ type: DataType.STRING, unique: false, allowNull: false })
   name: string;
 
@@ -48,6 +50,13 @@ export class Dictionary extends Model<Dictionary> {
   })
   @Column({ type: DataType.BOOLEAN, allowNull: false })
   private: boolean;
+
+  @ApiProperty({
+    example: 'false',
+    description: 'Является ли словарь копией',
+  })
+  @Column({ type: DataType.BOOLEAN, allowNull: false })
+  isCopy: boolean;
 
   @ApiProperty({
     example: '1',

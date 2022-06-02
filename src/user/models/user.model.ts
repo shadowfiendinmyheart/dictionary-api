@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import {
+  Column,
+  DataType,
+  HasMany,
+  IsEmail,
+  Length,
+  Model,
+  Table,
+} from 'sequelize-typescript';
 import { Dictionary } from 'src/dictionary/models/dictionary.model';
 
 interface UserCreationAttrs {
@@ -20,20 +28,19 @@ export class User extends Model<User, UserCreationAttrs> {
   id: number;
 
   @ApiProperty({ example: 'user@mail.com', description: 'Почта пользователя' })
+  @IsEmail
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
   email: string;
 
   @ApiProperty({ example: 'password123', description: 'Пароль пользователя' })
+  @Length({ min: 8, max: 128 })
   @Column({ type: DataType.STRING, allowNull: false })
   password: string;
 
   @ApiProperty({ example: 'coolguy', description: 'Никнейм пользователя' })
+  @Length({ min: 3, max: 25 })
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
   username: string;
-
-  @ApiProperty({ example: 'xxxxx.yyyyy.zzzzz', description: 'Токен' })
-  @Column({ type: DataType.STRING, allowNull: true })
-  token: string;
 
   @HasMany(() => Dictionary)
   dictionaries: Dictionary[];

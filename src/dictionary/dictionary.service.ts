@@ -41,6 +41,7 @@ export class DictionaryService {
 
     const dictionary = await this.dictionaryRepository.create({
       ...dto,
+      isCopy: false,
       user_id: userId,
     });
     return dictionary;
@@ -84,6 +85,7 @@ export class DictionaryService {
       to: dictionary.to,
       from: dictionary.from,
       private: true,
+      isCopy: true,
       user_id: userId,
     });
 
@@ -165,13 +167,28 @@ export class DictionaryService {
   }
 
   async changePrivate(dictionaryId: number) {
-    const dictionary = await this.dictionaryRepository.update(
-      //https://stackoverflow.com/questions/52283896/toggle-a-boolean-column-with-sequelize
+    const dictionary = await this.dictionaryRepository.findOne({
+      where: { id: dictionaryId },
+    });
+
+    if (!dictionary) {
+      throw new HttpException('Словаря не существует', HttpStatus.NOT_FOUND);
+    }
+
+    if (dictionary.isCopy) {
+      throw new HttpException(
+        'Этот словарь невозможно изменить',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+
+    const updatedDictionary = await this.dictionaryRepository.update(
+      // https://stackoverflow.com/questions/52283896/toggle-a-boolean-column-with-sequelize
       { private: Sequelize.literal('NOT private') },
       { where: { id: dictionaryId } },
     );
 
-    return dictionary;
+    return updatedDictionary;
   }
 
   async changeName(dictionaryId: number, dictionaryName: string) {
