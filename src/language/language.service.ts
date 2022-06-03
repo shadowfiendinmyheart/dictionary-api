@@ -33,8 +33,9 @@ export class LanguageService {
     return language;
   }
 
-  findAll() {
-    return `This action returns all language`;
+  async findAll() {
+    const languages = await this.languageRepository.findAll();
+    return languages;
   }
 
   findOne(id: number) {
