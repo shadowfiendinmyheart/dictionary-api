@@ -10,7 +10,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { Card } from 'src/card/models/card.model';
-import { Languages } from 'src/translate/types';
+import { Language } from 'src/language/models/language.model';
 import { User } from 'src/user/models/user.model';
 
 @Table({ tableName: 'dictionary' })
@@ -33,16 +33,25 @@ export class Dictionary extends Model<Dictionary> {
     example: 'Список животных африки для начального изучения',
     description: 'Описание словаря',
   })
+  @Length({ max: 500 })
   @Column({ type: DataType.STRING, unique: false, allowNull: true })
   description: string;
 
-  @ApiProperty({ example: 'english', description: 'Язык с которого переводят' })
-  @Column({ type: DataType.STRING, allowNull: false })
-  from: Languages;
+  @ApiProperty({ example: '1', description: 'Id языка с которого переводят' })
+  @ForeignKey(() => Language)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  from_id: number;
 
-  @ApiProperty({ example: 'russian', description: 'Язык на который переводят' })
-  @Column({ type: DataType.STRING, allowNull: false })
-  to: Languages;
+  @BelongsTo(() => Language, 'from_id')
+  fromLanguage: Language;
+
+  @ApiProperty({ example: '2', description: 'Id языка на который переводят' })
+  @ForeignKey(() => Language)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  to_id: number;
+
+  @BelongsTo(() => Language, 'to_id')
+  toLanguage: Language;
 
   @ApiProperty({
     example: 'true',

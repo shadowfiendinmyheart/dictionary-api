@@ -42,6 +42,10 @@ export class User extends Model<User, UserCreationAttrs> {
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
   username: string;
 
+  @ApiProperty({ example: 'xxxxx.yyyyy.zzzzz', description: 'Токен' })
+  @Column({ type: DataType.STRING, allowNull: true })
+  token: string;
+
   @HasMany(() => Dictionary)
   dictionaries: Dictionary[];
 }

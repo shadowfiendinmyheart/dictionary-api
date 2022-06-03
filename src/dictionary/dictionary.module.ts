@@ -6,6 +6,7 @@ import { Dictionary } from './models/dictionary.model';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AuthModule } from 'src/auth/auth.module';
 import { CardModule } from 'src/card/card.module';
+import { LanguageModule } from 'src/language/language.module';
 
 @Module({
   controllers: [DictionaryController],
@@ -14,6 +15,7 @@ import { CardModule } from 'src/card/card.module';
     SequelizeModule.forFeature([Dictionary, User]),
     forwardRef(() => AuthModule),
     forwardRef(() => CardModule),
+    LanguageModule,
   ],
   exports: [DictionaryService],
 })

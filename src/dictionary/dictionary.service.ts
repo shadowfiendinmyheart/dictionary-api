@@ -13,6 +13,8 @@ import { CreateDictionaryDto } from './dto/create-dictionary.dto';
 import { Sequelize } from 'sequelize-typescript';
 import { CardService } from 'src/card/card.service';
 import { User } from 'src/user/models/user.model';
+import { LanguageService } from 'src/language/language.service';
+import { Language } from 'src/language/models/language.model';
 
 @Injectable()
 export class DictionaryService {
@@ -21,16 +23,22 @@ export class DictionaryService {
     @Inject(REQUEST) private request: Request,
     @Inject(forwardRef(() => CardService))
     private cardService: CardService,
+    private languageService: LanguageService,
   ) {}
 
   async createDictionary(dto: CreateDictionaryDto) {
     const userId = this.request.user.id;
 
+    this.languageService.findByName(dto.from);
+
+    const fromLanguage = await this.languageService.findOrCreate(dto.from);
+    const toLanguage = await this.languageService.findOrCreate(dto.to);
+
     const isExistDictionary = await this.checkExistDictionary(
       userId,
       dto.name,
-      dto.from,
-      dto.to,
+      fromLanguage.id,
+      toLanguage.id,
     );
     if (isExistDictionary) {
       throw new HttpException(
@@ -41,6 +49,8 @@ export class DictionaryService {
 
     const dictionary = await this.dictionaryRepository.create({
       ...dto,
+      from_id: fromLanguage.id,
+      to_id: toLanguage.id,
       isCopy: false,
       user_id: userId,
     });
@@ -55,6 +65,8 @@ export class DictionaryService {
           model: User,
           attributes: ['username'],
         },
+        { model: Language, as: 'fromLanguage' },
+        { model: Language, as: 'toLanguage' },
       ],
     });
 
@@ -69,8 +81,8 @@ export class DictionaryService {
     const isExistDictionary = await this.checkExistDictionary(
       userId,
       dictionary.name,
-      dictionary.from,
-      dictionary.to,
+      dictionary.from_id,
+      dictionary.to_id,
     );
     if (isExistDictionary) {
       throw new HttpException(
@@ -82,8 +94,8 @@ export class DictionaryService {
     const copyDictionary = await this.dictionaryRepository.create({
       name: dictionary.name,
       description: dictionary.description,
-      to: dictionary.to,
-      from: dictionary.from,
+      from_id: dictionary.from_id,
+      to_id: dictionary.to_id,
       private: true,
       isCopy: true,
       user_id: userId,
@@ -105,6 +117,8 @@ export class DictionaryService {
           model: User,
           attributes: ['username'],
         },
+        { model: Language, as: 'fromLanguage' },
+        { model: Language, as: 'toLanguage' },
       ],
     });
 
@@ -119,6 +133,8 @@ export class DictionaryService {
           model: User,
           attributes: ['username'],
         },
+        { model: Language, as: 'fromLanguage' },
+        { model: Language, as: 'toLanguage' },
       ],
     });
 
@@ -133,6 +149,8 @@ export class DictionaryService {
           model: User,
           attributes: ['username'],
         },
+        { model: Language, as: 'fromLanguage' },
+        { model: Language, as: 'toLanguage' },
       ],
     });
 
@@ -220,11 +238,11 @@ export class DictionaryService {
   private async checkExistDictionary(
     userId: number,
     name: string,
-    from: string,
-    to: string,
+    fromId: number,
+    toId: number,
   ) {
     const dictionary = await this.dictionaryRepository.findOne({
-      where: { user_id: userId, name, from, to },
+      where: { user_id: userId, name, from_id: fromId, to_id: toId },
     });
 
     return dictionary ? dictionary.id : false;
