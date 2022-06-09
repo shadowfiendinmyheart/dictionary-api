@@ -7,6 +7,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { AuthModule } from 'src/auth/auth.module';
 import { CardModule } from 'src/card/card.module';
 import { LanguageModule } from 'src/language/language.module';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   controllers: [DictionaryController],
@@ -16,6 +17,7 @@ import { LanguageModule } from 'src/language/language.module';
     forwardRef(() => AuthModule),
     forwardRef(() => CardModule),
     LanguageModule,
+    UserModule,
   ],
   exports: [DictionaryService],
 })

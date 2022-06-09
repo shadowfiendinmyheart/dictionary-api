@@ -15,6 +15,7 @@ import { CardService } from 'src/card/card.service';
 import { User } from 'src/user/models/user.model';
 import { LanguageService } from 'src/language/language.service';
 import { Language } from 'src/language/models/language.model';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class DictionaryService {
@@ -24,6 +25,7 @@ export class DictionaryService {
     @Inject(forwardRef(() => CardService))
     private cardService: CardService,
     private languageService: LanguageService,
+    private userService: UserService,
   ) {}
 
   async createDictionary(dto: CreateDictionaryDto) {
@@ -55,8 +57,13 @@ export class DictionaryService {
       user_id: userId,
     });
 
+    const user = await this.userService.getUser(userId);
+
     return {
       ...dictionary,
+      user: {
+        username: user.username,
+      },
       fromLanguage: {
         id: fromLanguage.id,
         name: fromLanguage.name,
