@@ -54,7 +54,18 @@ export class DictionaryService {
       is_copy: false,
       user_id: userId,
     });
-    return dictionary;
+
+    return {
+      ...dictionary,
+      fromLanguage: {
+        id: fromLanguage.id,
+        name: fromLanguage.name,
+      },
+      toLanguage: {
+        id: toLanguage.id,
+        name: toLanguage.name,
+      },
+    };
   }
 
   async getAllByUserId(userId: number = this.request.user.id) {
