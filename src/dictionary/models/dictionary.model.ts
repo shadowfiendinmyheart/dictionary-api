@@ -65,7 +65,7 @@ export class Dictionary extends Model<Dictionary> {
     description: 'Является ли словарь копией',
   })
   @Column({ type: DataType.BOOLEAN, allowNull: false })
-  isCopy: boolean;
+  is_copy: boolean;
 
   @ApiProperty({
     example: '1',

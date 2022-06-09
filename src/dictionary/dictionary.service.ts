@@ -51,7 +51,7 @@ export class DictionaryService {
       ...dto,
       from_id: fromLanguage.id,
       to_id: toLanguage.id,
-      isCopy: false,
+      is_copy: false,
       user_id: userId,
     });
     return dictionary;
@@ -97,7 +97,7 @@ export class DictionaryService {
       from_id: dictionary.from_id,
       to_id: dictionary.to_id,
       private: true,
-      isCopy: true,
+      is_copy: true,
       user_id: userId,
     });
 
@@ -193,7 +193,7 @@ export class DictionaryService {
       throw new HttpException('Словаря не существует', HttpStatus.NOT_FOUND);
     }
 
-    if (dictionary.isCopy) {
+    if (dictionary.is_copy) {
       throw new HttpException(
         'Этот словарь невозможно изменить',
         HttpStatus.METHOD_NOT_ALLOWED,
